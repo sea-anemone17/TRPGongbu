@@ -25,6 +25,15 @@
   --log-system: rgba(255, 255, 255, 0.04);
   --log-roll: rgba(255, 204, 77, 0.08);
   --log-note: rgba(167, 139, 250, 0.08);
+
+  --session-card-bg: linear-gradient(180deg, var(--panel), var(--panel-2));
+  --session-card-border: var(--line);
+  --session-user-bar: var(--accent);
+  --session-partner-bar: var(--accent-2);
+  --session-roll-bar: var(--warning);
+  --session-note-bar: #a78bfa;
+  --session-system-bar: rgba(255,255,255,0.22);
+  --session-avatar-grad: linear-gradient(135deg, var(--accent), var(--accent-2));
 }
 
 body[data-theme="light"] {
@@ -565,4 +574,79 @@ body[data-theme="dark"] #authStatus::before {
   .character-top {
     flex-direction: column;
   }
+}
+
+body[data-theme="pink"] {
+  --session-card-bg: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.82),
+    rgba(255, 240, 247, 0.94)
+  );
+  --session-card-border: rgba(223, 139, 180, 0.30);
+  --session-user-bar: #ff6fa5;
+  --session-partner-bar: #ff93c4;
+  --session-roll-bar: #f6b73c;
+  --session-note-bar: #d384be;
+  --session-system-bar: rgba(223, 139, 180, 0.22);
+  --session-avatar-grad: linear-gradient(135deg, #ff6fa5, #ff93c4);
+}
+
+body[data-theme="green"] {
+  --session-card-bg: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.84),
+    rgba(237, 247, 241, 0.94)
+  );
+  --session-card-border: rgba(120, 162, 137, 0.28);
+  --session-user-bar: #4caf7a;
+  --session-partner-bar: #7dd8b1;
+  --session-roll-bar: #d8a63c;
+  --session-note-bar: #87a494;
+  --session-system-bar: rgba(120, 162, 137, 0.20);
+  --session-avatar-grad: linear-gradient(135deg, #4caf7a, #7dd8b1);
+}
+
+body[data-theme="blue"] {
+  --session-card-bg: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.86),
+    rgba(239, 244, 255, 0.95)
+  );
+  --session-card-border: rgba(132, 157, 214, 0.28);
+  --session-user-bar: #4f8cff;
+  --session-partner-bar: #77adff;
+  --session-roll-bar: #e7ae3f;
+  --session-note-bar: #8097cc;
+  --session-system-bar: rgba(132, 157, 214, 0.22);
+  --session-avatar-grad: linear-gradient(135deg, #4f8cff, #77adff);
+}
+
+body[data-theme="light"] {
+  --session-card-bg: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.94),
+    rgba(247, 249, 253, 0.98)
+  );
+  --session-card-border: rgba(148, 163, 193, 0.18);
+  --session-user-bar: #7c9dff;
+  --session-partner-bar: #67e8f9;
+  --session-roll-bar: #f4b740;
+  --session-note-bar: #adaafa;
+  --session-system-bar: rgba(148, 163, 193, 0.18);
+  --session-avatar-grad: linear-gradient(135deg, #7c9dff, #67e8f9);
+}
+
+body[data-theme="yellow"] {
+  --session-card-bg: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.84),
+    rgba(255, 248, 228, 0.94)
+  );
+  --session-card-border: rgba(196, 169, 74, 0.26);
+  --session-user-bar: #f4c430;
+  --session-partner-bar: #ffd966;
+  --session-roll-bar: #d19a00;
+  --session-note-bar: #c7b15b;
+  --session-system-bar: rgba(196, 169, 74, 0.20);
+  --session-avatar-grad: linear-gradient(135deg, #f4c430, #ffd966);
 }
