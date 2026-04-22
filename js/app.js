@@ -104,3 +104,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+function deleteCharacter() {
+  if (!currentSession || !selectedCharacterId) return;
+
+  if (!confirm("이 캐릭터를 삭제하시겠습니까?")) return;
+
+  currentSession.characters = currentSession.characters.filter(
+    c => c.id !== selectedCharacterId
+  );
+
+  // 선택 캐릭터 재설정
+  const next = currentSession.characters[0];
+  selectedCharacterId = next ? next.id : null;
+
+  currentSession.selectedCharacterId = selectedCharacterId;
+
+  saveAppState(appState);
+  renderAll();
+}
