@@ -1,8 +1,117 @@
-#logContainer div {
-  padding: 5px;
-  border-bottom: 1px solid #ddd;
+
+.log-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  background: var(--panel);
 }
 
-.log-system { color: gray; }
-.log-user { color: black; }
-.log-dice { color: purple; }
+.log-card.dialogue.user-tone {
+  background: var(--log-user);
+}
+
+.log-card.dialogue.partner-tone {
+  background: var(--log-partner);
+}
+
+.log-card.system {
+  background: var(--log-system);
+}
+
+.log-card.roll {
+  background: var(--log-roll);
+}
+
+.log-card.note {
+  background: var(--log-note);
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.log-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.log-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.14);
+}
+
+.log-avatar-fallback {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+.log-speaker {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.log-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.log-time {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.log-body {
+  font-size: 15px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.roll-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--line);
+}
+
+.roll-badge.success { background: rgba(52, 211, 153, 0.16); color: var(--success); }
+.roll-badge.hard { background: rgba(103, 232, 249, 0.18); color: #0891b2; }
+.roll-badge.extreme { background: rgba(124, 157, 255, 0.18); color: var(--accent); }
+.roll-badge.failure { background: rgba(251, 113, 133, 0.14); color: var(--danger); }
+.roll-badge.fumble { background: rgba(239, 68, 68, 0.16); color: #dc2626; }
+.roll-badge.critical { background: rgba(250, 204, 21, 0.18); color: #ca8a04; }
+
+.empty-state {
+  border: 1px dashed var(--line);
+  border-radius: 18px;
+  padding: 30px 16px;
+  text-align: center;
+  color: var(--muted);
+  background: rgba(255,255,255,0.03);
+}
