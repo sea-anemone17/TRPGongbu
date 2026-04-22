@@ -654,3 +654,32 @@ function exportCurrentSessionMarkdown() {
 
   downloadFile(`${safeTitle}.md`, md, "text/markdown");
 }
+
+window.addLog = addLog;
+window.createSession = createSession;
+window.saveGoal = saveGoal;
+window.clearComposer = clearComposer;
+window.renderAll = renderAll;
+window.updateCurrentSessionRef = updateCurrentSessionRef;
+window.populateSkillSelect = populateSkillSelect;
+window.renderCharacterCard = renderCharacterCard;
+window.saveCurrentCharacter = saveCurrentCharacter;
+window.addCharacter = addCharacter;
+window.deleteCharacter = deleteCharacter;
+window.handleAvatarUpload = handleAvatarUpload;
+window.exportCurrentSessionMarkdown = exportCurrentSessionMarkdown;
+
+Object.defineProperty(window, "currentSession", {
+  get: () => currentSession,
+  set: v => currentSession = v
+});
+
+Object.defineProperty(window, "appState", {
+  get: () => appState,
+  set: v => appState = v
+});
+
+Object.defineProperty(window, "selectedCharacterId", {
+  get: () => selectedCharacterId,
+  set: v => selectedCharacterId = v
+});
