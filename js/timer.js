@@ -41,7 +41,7 @@ function tickTimer() {
       text: "타이머가 종료되었습니다.",
       createdAt: new Date().toISOString()
     });
-    renderAll();
+    persistAndRefresh();
   }
 }
 
