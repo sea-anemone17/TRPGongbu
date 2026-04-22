@@ -58,7 +58,8 @@ function createDefaultState() {
   const session = createDefaultSession();
   return {
     sessions: [session],
-    currentSessionId: session.id
+    currentSessionId: session.id,
+    openTabs: [session.id]
   };
 }
 
@@ -66,8 +67,18 @@ function loadAppState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return createDefaultState();
+
     const parsed = JSON.parse(raw);
     if (!parsed.sessions?.length) return createDefaultState();
+
+    if (!parsed.currentSessionId) {
+      parsed.currentSessionId = parsed.sessions[0].id;
+    }
+
+    if (!Array.isArray(parsed.openTabs) || parsed.openTabs.length === 0) {
+      parsed.openTabs = [parsed.currentSessionId];
+    }
+
     return parsed;
   } catch (err) {
     console.error("loadAppState error:", err);
