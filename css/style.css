@@ -752,7 +752,13 @@ body[data-theme="dark"] #authStatus::before {
   }
 
   .log-panel {
-    height: 60vh;
+    height: auto;
+    min-height: 75vh;
+  }
+
+  .log-container {
+    min-height: 48vh;
+    max-height: 60vh;
   }
 
   .composer-row,
