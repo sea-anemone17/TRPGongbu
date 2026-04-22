@@ -34,10 +34,17 @@ function getCurrentSession() {
 function updateCurrentSessionRef() {
   currentSession = getCurrentSession();
   if (!currentSession) return;
-  if (!currentSession.characters?.length) currentSession.characters = createDefaultCharacters();
-  if (!selectedCharacterId || !currentSession.characters.some(c => c.id === selectedCharacterId)) {
-    selectedCharacterId = currentSession.characters[0]?.id || null;
+
+  if (!currentSession.characters?.length) {
+    currentSession.characters = createDefaultCharacters();
   }
+
+  if (!currentSession.selectedCharacterId) {
+    currentSession.selectedCharacterId = currentSession.characters[0]?.id || null;
+  }
+
+  selectedCharacterId = currentSession.selectedCharacterId;
+  currentSession.selectedCharacterId = selectedCharacterId;
 }
 
 function persistAndRefresh() {
