@@ -47,6 +47,5 @@ function rollDice() {
     outcome
   });
 
-  saveAppState(appState);
-  renderAll();
+  persistAndRefresh();
 }
