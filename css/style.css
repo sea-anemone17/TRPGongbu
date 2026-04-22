@@ -710,7 +710,7 @@ body[data-theme="yellow"] .ghost-btn {
   opacity: 1;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 980px) {
   .main-area {
     grid-template-columns: 260px minmax(0, 1fr);
   }
@@ -791,4 +791,52 @@ body[data-theme="yellow"] .ghost-btn {
 
 body[data-theme="dark"] #authStatus::before {
   color: #7aa2ff;
+}
+
+.session-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.session-meta {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.session-meta h4,
+.session-meta p {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: keep-all;
+}
+
+.session-delete-btn {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.panel-head.sticky-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.theme-picker {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
