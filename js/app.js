@@ -1,10 +1,23 @@
-import { getCurrentUser } from "./auth.js";
+import { getCurrentUser, signUp, signIn, signOut } from "./auth.js";
 import {
   upsertSession,
   insertLog,
   upsertCharacter,
   deleteCharacterRemote
 } from "./supabase.js";
+
+async function refreshAuthStatus() {
+  const statusEl = document.getElementById("authStatus");
+  if (!statusEl) return;
+
+  const user = await getCurrentUser().catch(() => null);
+
+  if (user) {
+    statusEl.textContent = `로그인됨: ${user.email}`;
+  } else {
+    statusEl.textContent = "로그아웃 상태";
+  }
+}
 
 async function syncCurrentSessionToSupabase() {
   const user = await getCurrentUser().catch(() => null);
