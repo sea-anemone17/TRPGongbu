@@ -40,6 +40,11 @@ function updateCurrentSessionRef() {
     currentSession.characters = [];
   }
 
+  // logs 안전 보정  ← 이 줄 추가
+  if (!Array.isArray(currentSession.logs)) {
+    currentSession.logs = [];
+  }
+
   // 선택된 캐릭터가 삭제됐을 경우 처리
   if (
     currentSession.selectedCharacterId &&
