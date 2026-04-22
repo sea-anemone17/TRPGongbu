@@ -73,3 +73,25 @@ function resetTimer(seconds = null) {
   saveAppState(appState);
   renderTimer();
 }
+
+function restoreTimerIfNeeded() {
+  const timer = getTimerState();
+  if (!timer || !timer.isRunning || !timer.lastStartedAt) return;
+
+  const elapsed = Math.floor((Date.now() - timer.lastStartedAt) / 1000);
+  timer.remainingSec = Math.max(0, timer.remainingSec - elapsed);
+  timer.lastStartedAt = Date.now();
+
+  if (timer.remainingSec <= 0) {
+    timer.isRunning = false;
+    timer.lastStartedAt = null;
+    saveAppState(appState);
+    renderTimer();
+    return;
+  }
+
+  stopTimerTick();
+  timerInterval = setInterval(tickTimer, 1000);
+  saveAppState(appState);
+  renderTimer();
+}
