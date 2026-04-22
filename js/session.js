@@ -35,12 +35,12 @@ function updateCurrentSessionRef() {
   currentSession = getCurrentSession();
   if (!currentSession) return;
 
-  if (!currentSession.characters?.length) {
+  if (!currentSession.characters) { 
     currentSession.characters = createDefaultCharacters();
   }
 
-  if (!currentSession.selectedCharacterId) {
-    currentSession.selectedCharacterId = currentSession.characters[0]?.id || null;
+  if (!currentSession.selectedCharacterId && currentSession.characters.length > 0) {
+    currentSession.selectedCharacterId = currentSession.characters[0].id;
   }
 
   selectedCharacterId = currentSession.selectedCharacterId;
