@@ -19,14 +19,14 @@ function createDefaultSession() {
       isRunning: false,
       lastStartedAt: null
     },
-    characters: createDefaultCharacters(),
+    characters: null
     logs: [
       {
         id: "log_" + Date.now(),
         type: "system",
         speakerId: null,
         speakerName: "시스템",
-        text: "새 세션이 준비되었습니다. 목표를 적고, 캐릭터를 고른 뒤 로그를 시작해 보세요.",
+        text: "새 세션이 준비되었습니다. 먼저 캐릭터를 추가해 주세요.",
         createdAt: now
       }
     ]
