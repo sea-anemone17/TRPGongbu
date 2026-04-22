@@ -28,7 +28,7 @@ function escapeHtml(value) {
 }
 
 function getCurrentSession() {
-  return appState.sessions.find(s => s.id === appState.currentSessionId) || null;
+  return appState?.sessions?.find(s => s.id === appState.currentSessionId) || null;
 }
 
 function updateCurrentSessionRef() {
@@ -44,11 +44,13 @@ function updateCurrentSessionRef() {
   }
 
   selectedCharacterId = currentSession.selectedCharacterId;
-  currentSession.selectedCharacterId = selectedCharacterId;
 }
 
 function persistAndRefresh() {
-  currentSession.updatedAt = new Date().toISOString();
+  if (currentSession) {
+    currentSession.updatedAt = new Date().toISOString();
+    currentSession.selectedCharacterId = selectedCharacterId;
+  }
   saveAppState(appState);
   renderAll();
 }
@@ -57,11 +59,14 @@ function createSession() {
   const titleInput = document.getElementById("sessionTitleInput");
   const subjectInput = document.getElementById("sessionSubjectInput");
   const session = createDefaultSession();
-  const customTitle = titleInput.value.trim();
-  const customSubject = subjectInput.value.trim();
+
+  const customTitle = titleInput?.value.trim() || "";
+  const customSubject = subjectInput?.value.trim() || "";
 
   if (customTitle) session.title = customTitle;
   if (customSubject) session.subject = customSubject;
+
+  session.selectedCharacterId = session.characters[0]?.id || null;
 
   appState.sessions.unshift(session);
 
@@ -71,11 +76,13 @@ function createSession() {
 
   appState.currentSessionId = session.id;
   updateCurrentSessionRef();
-  selectedCharacterId = session.characters[0]?.id || null;
+  selectedCharacterId = session.selectedCharacterId;
 
   saveAppState(appState);
-  titleInput.value = "";
-  subjectInput.value = "";
+
+  if (titleInput) titleInput.value = "";
+  if (subjectInput) subjectInput.value = "";
+
   renderAll();
 }
 
@@ -84,17 +91,22 @@ function selectSession(sessionId) {
 }
 
 function addLog() {
-  const input = document.getElementById("logInput");
-  const type = document.getElementById("logType").value;
-  const speakerSelect = document.getElementById("speakerSelect");
-  const text = input.value.trim();
-  if (!currentSession || !text) return;
+  if (!currentSession) return;
 
-  const speakerId = type === "dialogue" ? speakerSelect.value : null;
+  const input = document.getElementById("logInput");
+  const typeEl = document.getElementById("logType");
+  const speakerSelect = document.getElementById("speakerSelect");
+
+  const text = input?.value.trim() || "";
+  const type = typeEl?.value || "dialogue";
+
+  if (!text) return;
+
+  const speakerId = type === "dialogue" ? speakerSelect?.value || null : null;
   const character = currentSession.characters.find(c => c.id === speakerId);
 
   const log = {
-    id: "log_" + Date.now(),
+    id: "log_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
     type,
     speakerId: character?.id || null,
     speakerName: character?.name || (type === "system" ? "시스템" : "메모"),
@@ -103,27 +115,33 @@ function addLog() {
   };
 
   currentSession.logs.push(log);
-  input.value = "";
+
+  if (input) input.value = "";
   persistAndRefresh();
 }
 
 function clearComposer() {
-  document.getElementById("logInput").value = "";
+  const input = document.getElementById("logInput");
+  if (input) input.value = "";
 }
 
 function saveGoal() {
   if (!currentSession) return;
-  currentSession.goal = document.getElementById("goalInput").value.trim() || "";
+  const goalInput = document.getElementById("goalInput");
+  currentSession.goal = goalInput?.value.trim() || "";
   persistAndRefresh();
 }
 
 function getCharacterById(id) {
-  return currentSession?.characters.find(c => c.id === id) || null;
+  return currentSession?.characters?.find(c => c.id === id) || null;
 }
 
 function renderSessionList() {
   const wrap = document.getElementById("sessionList");
+  if (!wrap) return;
+
   wrap.innerHTML = "";
+
   appState.sessions.forEach(session => {
     const card = document.createElement("button");
     card.className = "session-card" + (session.id === appState.currentSessionId ? " active" : "");
@@ -140,20 +158,24 @@ function renderSessionList() {
         <p>${escapeHtml(session.subject || "태그 없음")}</p>
       </div>
     `;
+
     card.addEventListener("click", () => openSessionInTab(session.id));
     wrap.appendChild(card);
   });
 }
 
 function resolveLogTone(log) {
-  if (log.type !== "dialogue") return "";
+  if (!currentSession || log.type !== "dialogue") return "";
   const idx = currentSession.characters.findIndex(c => c.id === log.speakerId);
   return idx % 2 === 0 ? "user-tone" : "partner-tone";
 }
 
 function renderLogs() {
   const container = document.getElementById("logContainer");
+  if (!container) return;
+
   container.innerHTML = "";
+
   if (!currentSession?.logs?.length) {
     container.innerHTML = `<div class="empty-state">아직 로그가 없습니다. 첫 장면을 시작해 보세요.</div>`;
     return;
@@ -181,6 +203,7 @@ function renderLogs() {
         failure: "실패",
         fumble: "펌블"
       }[log.outcome] || "판정";
+
       extra = `<div class="roll-badge ${log.outcome}">${outcomeLabel}</div>`;
     }
 
@@ -193,11 +216,15 @@ function renderLogs() {
             <div class="log-sub">${escapeHtml(subText)}</div>
           </div>
         </div>
-        <div class="log-time">${new Date(log.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}</div>
+        <div class="log-time">${new Date(log.createdAt).toLocaleTimeString("ko-KR", {
+          hour: "2-digit",
+          minute: "2-digit"
+        })}</div>
       </div>
       <div class="log-body">${body}</div>
       ${extra}
     `;
+
     container.appendChild(card);
   });
 
@@ -207,21 +234,36 @@ function renderLogs() {
 function renderSessionHeader() {
   const titleEl = document.getElementById("currentSessionTitle");
   const metaEl = document.getElementById("currentSessionMeta");
+  const goalInput = document.getElementById("goalInput");
+
+  if (!titleEl || !metaEl) return;
+
   if (!currentSession) {
     titleEl.textContent = "세션이 없습니다.";
     metaEl.textContent = "새 세션을 만들어 주세요.";
+    if (goalInput) goalInput.value = "";
     return;
   }
+
   titleEl.textContent = currentSession.title;
   metaEl.textContent = `${currentSession.subject || "태그 없음"} · 캐릭터 ${currentSession.characters.length}명`;
-  document.getElementById("goalInput").value = currentSession.goal || "";
+
+  if (goalInput) {
+    goalInput.value = currentSession.goal || "";
+  }
 }
 
 function populateCharacterSelects() {
+  if (!currentSession || !currentSession.characters) return;
+
   const ids = ["speakerSelect", "characterSelect", "diceCharacter"];
+
   ids.forEach(id => {
     const select = document.getElementById(id);
+    if (!select) return;
+
     select.innerHTML = "";
+
     currentSession.characters.forEach(char => {
       const option = document.createElement("option");
       option.value = char.id;
@@ -232,18 +274,24 @@ function populateCharacterSelects() {
 
   ["speakerSelect", "characterSelect", "diceCharacter"].forEach(id => {
     const select = document.getElementById(id);
-    if (selectedCharacterId) select.value = selectedCharacterId;
+    if (select && selectedCharacterId) {
+      select.value = selectedCharacterId;
+    }
   });
 
   populateSkillSelect();
 }
 
 function populateSkillSelect() {
-  const char = getCharacterById(document.getElementById("diceCharacter").value);
+  const diceCharacter = document.getElementById("diceCharacter");
   const skillSelect = document.getElementById("diceSkill");
+  if (!diceCharacter || !skillSelect) return;
+
+  const char = getCharacterById(diceCharacter.value);
   skillSelect.innerHTML = "";
 
   if (!char) return;
+
   Object.entries(char.stats).forEach(([key, value]) => {
     const option = document.createElement("option");
     option.value = key;
@@ -251,25 +299,35 @@ function populateSkillSelect() {
     option.textContent = `${SKILL_LABELS[key] || key} (${value})`;
     skillSelect.appendChild(option);
   });
+
   syncDiceTargetFromSkill();
 }
 
 function syncDiceTargetFromSkill() {
   const skillSelect = document.getElementById("diceSkill");
+  const targetInput = document.getElementById("diceTarget");
+  if (!skillSelect || !targetInput) return;
+
   const selected = skillSelect.options[skillSelect.selectedIndex];
-  document.getElementById("diceTarget").value = selected?.dataset.target || "";
+  targetInput.value = selected?.dataset.target || "";
 }
 
 function renderCharacterCard() {
   const char = getCharacterById(selectedCharacterId);
   if (!char) return;
 
-  document.getElementById("characterNameInput").value = char.name || "";
-  document.getElementById("characterColorInput").value = char.color || "#7aa2ff";
-  document.getElementById("characterDescInput").value = char.description || "";
-
+  const nameInput = document.getElementById("characterNameInput");
+  const colorInput = document.getElementById("characterColorInput");
+  const descInput = document.getElementById("characterDescInput");
   const avatar = document.getElementById("characterAvatarPreview");
   const fallback = document.getElementById("avatarFallback");
+
+  if (!nameInput || !colorInput || !descInput || !avatar || !fallback) return;
+
+  nameInput.value = char.name || "";
+  colorInput.value = char.color || "#7aa2ff";
+  descInput.value = char.description || "";
+
   if (char.avatar) {
     avatar.src = char.avatar;
     avatar.style.display = "block";
@@ -289,38 +347,57 @@ function renderCharacterCard() {
 
 function saveCurrentCharacter() {
   const char = getCharacterById(selectedCharacterId);
-  if (!char) return;
+  if (!char || !currentSession) return;
 
-  char.name = document.getElementById("characterNameInput").value.trim() || "이름 없음";
-  char.color = document.getElementById("characterColorInput").value || "#7aa2ff";
-  char.description = document.getElementById("characterDescInput").value.trim();
+  const nameInput = document.getElementById("characterNameInput");
+  const colorInput = document.getElementById("characterColorInput");
+  const descInput = document.getElementById("characterDescInput");
+
+  if (!nameInput || !colorInput || !descInput) return;
+
+  char.name = nameInput.value.trim() || "이름 없음";
+  char.color = colorInput.value || "#7aa2ff";
+  char.description = descInput.value.trim();
 
   document.querySelectorAll(".stat-input").forEach(input => {
     const key = input.dataset.stat;
     char.stats[key] = Number(input.value) || 1;
   });
 
+  currentSession.selectedCharacterId = selectedCharacterId;
   persistAndRefresh();
 }
 
 function addCharacter() {
   if (!currentSession) return;
-  const id = "char_" + Date.now();
+
+  const id = "char_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
+
   currentSession.characters.push({
     id,
     name: "새 캐릭터",
     avatar: "",
     color: "#a78bfa",
     description: "",
-    stats: { observe: 50, insight: 50, persuade: 50, logic: 50, psychology: 50, law: 50 }
+    stats: {
+      observe: 50,
+      insight: 50,
+      persuade: 50,
+      logic: 50,
+      psychology: 50,
+      law: 50
+    }
   });
+
   selectedCharacterId = id;
+  currentSession.selectedCharacterId = id;
   persistAndRefresh();
 }
 
 function handleAvatarUpload(file) {
   const char = getCharacterById(selectedCharacterId);
   if (!char || !file) return;
+
   const reader = new FileReader();
   reader.onload = event => {
     char.avatar = event.target.result;
@@ -334,6 +411,12 @@ function renderAll() {
   renderSessionList();
   renderTabs();
   renderSessionHeader();
+
+  if (!currentSession) {
+    renderLogs();
+    return;
+  }
+
   populateCharacterSelects();
   renderCharacterCard();
   renderLogs();
@@ -344,6 +427,7 @@ function openSessionInTab(sessionId) {
   if (!appState.openTabs.includes(sessionId)) {
     appState.openTabs.push(sessionId);
   }
+
   appState.currentSessionId = sessionId;
   updateCurrentSessionRef();
   saveAppState(appState);
@@ -352,13 +436,9 @@ function openSessionInTab(sessionId) {
 
 function closeTab(sessionId) {
   if (!appState.openTabs.includes(sessionId)) return;
+  if (appState.openTabs.length === 1) return;
 
   appState.openTabs = appState.openTabs.filter(id => id !== sessionId);
-
-  if (appState.openTabs.length === 0) {
-    appState.openTabs = [sessionId];
-    return;
-  }
 
   if (appState.currentSessionId === sessionId) {
     appState.currentSessionId = appState.openTabs[appState.openTabs.length - 1];
@@ -403,6 +483,7 @@ function renderTabs() {
     closeBtn.className = "tab-close";
     closeBtn.type = "button";
     closeBtn.textContent = "✕";
+
     closeBtn.addEventListener("click", (event) => {
       event.stopPropagation();
       closeTab(sessionId);
