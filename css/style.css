@@ -1,1 +1,50 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
 
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: #222;
+  color: white;
+}
+
+main {
+  display: flex;
+  height: calc(100vh - 50px);
+}
+
+#sidebar {
+  width: 20%;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+}
+
+#logArea {
+  width: 60%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+#logContainer {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+#rightPanel {
+  width: 20%;
+  border-left: 1px solid #ccc;
+  padding: 10px;
+}
+
+/* Themes */
+body[data-theme="pink"] { background: #ffe4ec; }
+body[data-theme="green"] { background: #e8f5e9; }
+body[data-theme="blue"] { background: #e3f2fd; }
+body[data-theme="dark"] { background: #121212; color: white; }
+body[data-theme="yellow"] { background: #fffde7; }

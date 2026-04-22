@@ -1,0 +1,8 @@
+#logContainer div {
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.log-system { color: gray; }
+.log-user { color: black; }
+.log-dice { color: purple; }
