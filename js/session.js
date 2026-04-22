@@ -1,4 +1,3 @@
-
 let appState = null;
 let currentSession = null;
 let selectedCharacterId = null;
@@ -366,4 +365,44 @@ function closeTab(sessionId) {
 function shortenTabTitle(title, max = 18) {
   if (title.length <= max) return title;
   return title.slice(0, max) + "...";
+}
+
+function renderTabs() {
+  const bar = document.getElementById("tabBar");
+  if (!bar) return;
+
+  bar.innerHTML = "";
+
+  appState.openTabs.forEach(sessionId => {
+    const session = appState.sessions.find(s => s.id === sessionId);
+    if (!session) return;
+
+    const tab = document.createElement("div");
+    tab.className = "tab-item" + (sessionId === appState.currentSessionId ? " active" : "");
+
+    const title = document.createElement("span");
+    title.className = "tab-title";
+    title.textContent = shortenTabTitle(session.title);
+    title.title = session.title;
+
+    title.addEventListener("click", () => {
+      appState.currentSessionId = sessionId;
+      updateCurrentSessionRef();
+      saveAppState(appState);
+      renderAll();
+    });
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "tab-close";
+    closeBtn.type = "button";
+    closeBtn.textContent = "✕";
+    closeBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      closeTab(sessionId);
+    });
+
+    tab.appendChild(title);
+    tab.appendChild(closeBtn);
+    bar.appendChild(tab);
+  });
 }
