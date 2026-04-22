@@ -91,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("saveCharacterBtn")?.addEventListener("click", saveCurrentCharacter);
   document.getElementById("addCharacterBtn")?.addEventListener("click", addCharacter);
+  document.getElementById("deleteCharacterBtn")?.addEventListener("click", deleteCharacter);
 
   document.getElementById("avatarInput")?.addEventListener("change", event => {
     const file = event.target.files?.[0];
