@@ -116,7 +116,11 @@ function addLog() {
 
   if (!text) return;
 
-  // 🔥 핵심 추가
+  if (!Array.isArray(currentSession.logs)) {
+    currentSession.logs = [];
+  }
+
+  // 답멘인데 캐릭터 없으면 막기
   if (type === "dialogue" && currentSession.characters.length === 0) {
     alert("먼저 캐릭터를 추가해 주세요.");
     return;
@@ -132,7 +136,10 @@ function addLog() {
     id: "log_" + Date.now(),
     type,
     speakerId: character?.id || null,
-    speakerName: character?.name || "삭제된 캐릭터",
+    speakerName:
+      type === "dialogue"
+        ? (character?.name || "삭제된 캐릭터")
+        : (type === "system" ? "시스템" : "메모"),
     text,
     createdAt: new Date().toISOString()
   };
@@ -140,6 +147,8 @@ function addLog() {
   currentSession.logs.push(log);
 
   if (input) input.value = "";
+
+  persistAndRefresh();
 }
 
 function clearComposer() {
