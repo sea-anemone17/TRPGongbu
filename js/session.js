@@ -218,7 +218,7 @@ function renderLogs() {
     const character = getCharacterById(log.speakerId);
     const avatarHtml = character?.avatar
       ? `<img class="log-avatar" src="${character.avatar}" alt="avatar" />`
-      : `<div class="log-avatar-fallback" style="background: linear-gradient(135deg, ${character?.color || 'var(--accent)'}, var(--accent-2));">${escapeHtml((log.speakerName || "?")[0] || "?")}</div>`;
+      : `<div class="log-avatar-fallback">${escapeHtml((log.speakerName || "?")[0] || "?")}</div>`;
 
     const subText = LOG_TYPE_LABELS[log.type] || log.type;
     const body = escapeHtml(log.text);
