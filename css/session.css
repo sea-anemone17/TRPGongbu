@@ -1,10 +1,10 @@
 .log-card {
   position: relative;
-  border: 1px solid var(--line);
   border-radius: 18px;
   padding: 14px 16px;
   margin-bottom: 12px;
-  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  background: var(--session-card-bg);
+  border: 1px solid var(--session-card-border);
   box-shadow: var(--shadow-soft);
   overflow: hidden;
   transition:
@@ -29,23 +29,23 @@
 }
 
 .log-card.dialogue.user-tone::before {
-  background: var(--accent);
+  background: var(--session-user-bar);
 }
 
 .log-card.dialogue.partner-tone::before {
-  background: var(--accent-2);
+  background: var(--session-partner-bar);
 }
 
 .log-card.system::before {
-  background: rgba(255,255,255,0.22);
+  background: var(--session-system-bar);
 }
 
 .log-card.roll::before {
-  background: var(--warning);
+  background: var(--session-roll-bar);
 }
 
 .log-card.note::before {
-  background: #a78bfa;
+  background: var(--session-note-bar);
 }
 
 .log-card.dialogue.user-tone {
@@ -103,7 +103,7 @@
   font-size: 12px;
   font-weight: 800;
   color: white;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  background: var(--session-avatar-grad);
 }
 
 .log-speaker {
