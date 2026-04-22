@@ -115,6 +115,57 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderCharacterCard();
   });
 
+  await refreshAuthStatus();
+
+  document.getElementById("signUpBtn")?.addEventListener("click", async () => {
+    const email = document.getElementById("authEmail")?.value.trim();
+    const password = document.getElementById("authPassword")?.value.trim();
+
+    if (!email || !password) {
+      alert("이메일과 비밀번호를 입력해 주세요.");
+      return;
+    }
+
+    try {
+      await signUp(email, password);
+      alert("회원가입 요청이 완료되었습니다. 이메일 인증이 켜져 있으면 메일함을 확인해 주세요.");
+      await refreshAuthStatus();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "회원가입 중 오류가 발생했습니다.");
+    }
+  });
+
+  document.getElementById("signInBtn")?.addEventListener("click", async () => {
+    const email = document.getElementById("authEmail")?.value.trim();
+    const password = document.getElementById("authPassword")?.value.trim();
+
+    if (!email || !password) {
+      alert("이메일과 비밀번호를 입력해 주세요.");
+      return;
+    }
+
+    try {
+      await signIn(email, password);
+      alert("로그인되었습니다.");
+      await refreshAuthStatus();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "로그인 중 오류가 발생했습니다.");
+    }
+  });
+
+  document.getElementById("signOutBtn")?.addEventListener("click", async () => {
+    try {
+      await signOut();
+      alert("로그아웃되었습니다.");
+      await refreshAuthStatus();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "로그아웃 중 오류가 발생했습니다.");
+    }
+  });
+
   // 기능 선택 변경
   document.getElementById("diceSkill")?.addEventListener("change", syncDiceTargetFromSkill);
 
