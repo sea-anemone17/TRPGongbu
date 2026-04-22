@@ -1,9 +1,9 @@
-
 const STORAGE_KEY = "hazel_study_room_v2";
 const THEME_KEY = "hazel_study_room_theme";
 
 function createDefaultSession() {
   const now = new Date().toISOString();
+
   return {
     id: "session_" + Date.now(),
     title: "첫 세션",
@@ -19,7 +19,8 @@ function createDefaultSession() {
       isRunning: false,
       lastStartedAt: null
     },
-    characters: null
+    characters: [],
+    selectedCharacterId: null,
     logs: [
       {
         id: "log_" + Date.now(),
@@ -57,6 +58,20 @@ function loadAppState() {
     if (!Array.isArray(parsed.openTabs) || parsed.openTabs.length === 0) {
       parsed.openTabs = [parsed.currentSessionId];
     }
+
+    // 예전 데이터 보정
+    parsed.sessions = parsed.sessions.map(session => ({
+      ...session,
+      characters: Array.isArray(session.characters) ? session.characters : [],
+      selectedCharacterId: session.selectedCharacterId ?? null,
+      logs: Array.isArray(session.logs) ? session.logs : [],
+      timer: session.timer || {
+        durationSec: 1500,
+        remainingSec: 1500,
+        isRunning: false,
+        lastStartedAt: null
+      }
+    }));
 
     return parsed;
   } catch (err) {
