@@ -6,6 +6,10 @@ import {
   deleteCharacterRemote
 } from "./supabase.js";
 
+/* =========================
+   Auth 상태
+========================= */
+
 async function refreshAuthStatus() {
   const statusEl = document.getElementById("authStatus");
   if (!statusEl) return;
@@ -19,75 +23,115 @@ async function refreshAuthStatus() {
   }
 }
 
+/* =========================
+   Supabase Sync
+========================= */
+
 async function syncCurrentSessionToSupabase() {
   const user = await getCurrentUser().catch(() => null);
-  if (!user || !currentSession) return;
+  const session = window.currentSession;
 
-  await upsertSession(currentSession, user.id);
+  if (!user || !session) return;
 
-  for (const char of currentSession.characters || []) {
-    await upsertCharacter(char, currentSession.id, user.id);
+  await upsertSession(session, user.id);
+
+  for (const char of session.characters || []) {
+    await upsertCharacter(char, session.id, user.id);
   }
 }
 
 async function syncLatestLogToSupabase(previousLastLogId = null) {
   const user = await getCurrentUser().catch(() => null);
-  if (!user || !currentSession || !currentSession.logs?.length) return;
+  const session = window.currentSession;
 
-  const latestLog = currentSession.logs[currentSession.logs.length - 1];
+  if (!user || !session || !session.logs?.length) return;
+
+  const latestLog = session.logs[session.logs.length - 1];
   if (!latestLog) return;
 
   if (previousLastLogId && latestLog.id === previousLastLogId) return;
 
-  await insertLog(latestLog, currentSession.id, user.id);
-  await upsertSession(currentSession, user.id);
+  await insertLog(latestLog, session.id, user.id);
+  await upsertSession(session, user.id);
 }
 
+/* =========================
+   INIT
+========================= */
+
 document.addEventListener("DOMContentLoaded", async () => {
-  appState = loadAppState();
+  window.appState = loadAppState();
   document.body.setAttribute("data-theme", loadTheme());
 
-  updateCurrentSessionRef();
-  renderAll();
+  window.updateCurrentSessionRef();
+  window.renderAll();
 
-  if (typeof restoreTimerIfNeeded === "function") {
-    restoreTimerIfNeeded();
+  if (typeof window.restoreTimerIfNeeded === "function") {
+    window.restoreTimerIfNeeded();
   }
 
-  // 새 세션 생성
+  /* =========================
+     세션
+  ========================= */
+
   document.getElementById("newSessionBtn")?.addEventListener("click", async () => {
-    createSession();
+    window.createSession();
     await syncCurrentSessionToSupabase().catch(console.error);
   });
 
-  // 로그 추가
+  /* =========================
+     로그
+  ========================= */
+
   document.getElementById("addLogBtn")?.addEventListener("click", async () => {
-    const before = currentSession?.logs?.[currentSession.logs.length - 1]?.id || null;
-    addLog();
+    const session = window.currentSession;
+    const before = session?.logs?.[session.logs.length - 1]?.id || null;
+
+    window.addLog();
+
     await syncLatestLogToSupabase(before).catch(console.error);
   });
 
-  // 입력창 비우기
-  document.getElementById("clearInputBtn")?.addEventListener("click", clearComposer);
+  document.getElementById("clearInputBtn")?.addEventListener("click", window.clearComposer);
 
-  // 목표 저장
+  document.getElementById("logInput")?.addEventListener("keydown", async event => {
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+      const session = window.currentSession;
+      const before = session?.logs?.[session.logs.length - 1]?.id || null;
+
+      window.addLog();
+
+      await syncLatestLogToSupabase(before).catch(console.error);
+    }
+  });
+
+  /* =========================
+     목표
+  ========================= */
+
   document.getElementById("saveGoalBtn")?.addEventListener("click", async () => {
-    saveGoal();
+    window.saveGoal();
     await syncCurrentSessionToSupabase().catch(console.error);
   });
 
-  // 타이머
-  document.getElementById("startTimerBtn")?.addEventListener("click", startTimer);
-  document.getElementById("pauseTimerBtn")?.addEventListener("click", pauseTimer);
-  document.getElementById("resetTimerBtn")?.addEventListener("click", () => resetTimer());
+  /* =========================
+     타이머
+  ========================= */
+
+  document.getElementById("startTimerBtn")?.addEventListener("click", window.startTimer);
+  document.getElementById("pauseTimerBtn")?.addEventListener("click", window.pauseTimer);
+  document.getElementById("resetTimerBtn")?.addEventListener("click", () => window.resetTimer());
 
   document.querySelectorAll(".preset-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      resetTimer(Number(btn.dataset.seconds));
+      window.resetTimer(Number(btn.dataset.seconds));
     });
   });
 
-  // 테마
+  /* =========================
+     테마
+  ========================= */
+
   document.querySelectorAll(".theme-chip").forEach(btn => {
     btn.addEventListener("click", () => {
       const theme = btn.dataset.themeName;
@@ -96,24 +140,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // 주사위 캐릭터 변경
-  document.getElementById("diceCharacter")?.addEventListener("change", event => {
-    selectedCharacterId = event.target.value;
-
-    if (currentSession) {
-      currentSession.selectedCharacterId = selectedCharacterId;
-      saveAppState(appState);
-    }
-
-    const characterSelect = document.getElementById("characterSelect");
-    const speakerSelect = document.getElementById("speakerSelect");
-
-    if (characterSelect) characterSelect.value = selectedCharacterId;
-    if (speakerSelect) speakerSelect.value = selectedCharacterId;
-
-    populateSkillSelect();
-    renderCharacterCard();
-  });
+  /* =========================
+     Auth
+  ========================= */
 
   await refreshAuthStatus();
 
@@ -128,11 +157,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       await signUp(email, password);
-      alert("회원가입 요청이 완료되었습니다. 이메일 인증이 켜져 있으면 메일함을 확인해 주세요.");
+      alert("회원가입 완료");
       await refreshAuthStatus();
     } catch (err) {
-      console.error(err);
-      alert(err.message || "회원가입 중 오류가 발생했습니다.");
+      alert(err.message);
     }
   });
 
@@ -140,130 +168,103 @@ document.addEventListener("DOMContentLoaded", async () => {
     const email = document.getElementById("authEmail")?.value.trim();
     const password = document.getElementById("authPassword")?.value.trim();
 
-    if (!email || !password) {
-      alert("이메일과 비밀번호를 입력해 주세요.");
-      return;
-    }
+    if (!email || !password) return;
 
     try {
       await signIn(email, password);
-      alert("로그인되었습니다.");
+      alert("로그인됨");
       await refreshAuthStatus();
     } catch (err) {
-      console.error(err);
-      alert(err.message || "로그인 중 오류가 발생했습니다.");
+      alert(err.message);
     }
   });
 
   document.getElementById("signOutBtn")?.addEventListener("click", async () => {
-    try {
-      await signOut();
-      alert("로그아웃되었습니다.");
-      await refreshAuthStatus();
-    } catch (err) {
-      console.error(err);
-      alert(err.message || "로그아웃 중 오류가 발생했습니다.");
-    }
+    await signOut();
+    alert("로그아웃됨");
+    await refreshAuthStatus();
   });
 
-  // 기능 선택 변경
-  document.getElementById("diceSkill")?.addEventListener("change", syncDiceTargetFromSkill);
+  /* =========================
+     주사위
+  ========================= */
 
-  // 주사위 굴리기
+  document.getElementById("diceSkill")?.addEventListener("change", window.syncDiceTargetFromSkill);
+
   document.getElementById("rollDiceBtn")?.addEventListener("click", async () => {
-    const before = currentSession?.logs?.[currentSession.logs.length - 1]?.id || null;
-    rollDice();
+    const session = window.currentSession;
+    const before = session?.logs?.[session.logs.length - 1]?.id || null;
+
+    window.rollDice();
+
     await syncLatestLogToSupabase(before).catch(console.error);
   });
 
-  // 마크다운 export
-  document.getElementById("exportMarkdownBtn")?.addEventListener("click", exportCurrentSessionMarkdown);
+  /* =========================
+     캐릭터
+  ========================= */
 
-  // 캐릭터 선택 변경
   document.getElementById("characterSelect")?.addEventListener("change", event => {
-    selectedCharacterId = event.target.value;
+    window.selectedCharacterId = event.target.value;
 
-    if (currentSession) {
-      currentSession.selectedCharacterId = selectedCharacterId;
-      saveAppState(appState);
+    if (window.currentSession) {
+      window.currentSession.selectedCharacterId = window.selectedCharacterId;
+      saveAppState(window.appState);
     }
 
-    const speakerSelect = document.getElementById("speakerSelect");
-    const diceCharacter = document.getElementById("diceCharacter");
-
-    if (speakerSelect) speakerSelect.value = selectedCharacterId;
-    if (diceCharacter) diceCharacter.value = selectedCharacterId;
-
-    populateSkillSelect();
-    renderCharacterCard();
+    window.populateSkillSelect();
+    window.renderCharacterCard();
   });
 
-  // 화자 선택 변경
   document.getElementById("speakerSelect")?.addEventListener("change", event => {
-    selectedCharacterId = event.target.value;
+    window.selectedCharacterId = event.target.value;
 
-    if (currentSession) {
-      currentSession.selectedCharacterId = selectedCharacterId;
-      saveAppState(appState);
+    if (window.currentSession) {
+      window.currentSession.selectedCharacterId = window.selectedCharacterId;
+      saveAppState(window.appState);
     }
 
-    const characterSelect = document.getElementById("characterSelect");
-    const diceCharacter = document.getElementById("diceCharacter");
-
-    if (characterSelect) characterSelect.value = selectedCharacterId;
-    if (diceCharacter) diceCharacter.value = selectedCharacterId;
-
-    populateSkillSelect();
-    renderCharacterCard();
+    window.populateSkillSelect();
+    window.renderCharacterCard();
   });
 
-  // 캐릭터 저장
   document.getElementById("saveCharacterBtn")?.addEventListener("click", async () => {
-    saveCurrentCharacter();
+    window.saveCurrentCharacter();
     await syncCurrentSessionToSupabase().catch(console.error);
   });
 
-  // 캐릭터 추가
   document.getElementById("addCharacterBtn")?.addEventListener("click", async () => {
-    addCharacter();
+    window.addCharacter();
     await syncCurrentSessionToSupabase().catch(console.error);
   });
 
-  // 캐릭터 삭제
   document.getElementById("deleteCharacterBtn")?.addEventListener("click", async () => {
-    const deletedId = selectedCharacterId;
-    const beforeCount = currentSession?.characters?.length ?? 0;
+    const deletedId = window.selectedCharacterId;
+    const beforeCount = window.currentSession?.characters?.length ?? 0;
 
-    deleteCharacter();
+    window.deleteCharacter();
 
-    const afterCount = currentSession?.characters?.length ?? 0;
+    const afterCount = window.currentSession?.characters?.length ?? 0;
     const user = await getCurrentUser().catch(() => null);
 
-    // 실제로 삭제가 일어났을 때만 원격 삭제
     if (user && deletedId && afterCount < beforeCount) {
       await deleteCharacterRemote(deletedId, user.id).catch(console.error);
       await syncCurrentSessionToSupabase().catch(console.error);
     }
   });
 
-  // 프사 업로드
   document.getElementById("avatarInput")?.addEventListener("change", async event => {
     const file = event.target.files?.[0];
     if (file) {
-      handleAvatarUpload(file);
-      // 현재는 localStorage 기반 즉시 반영
-      // 나중에 Storage 업로드까지 붙이면 여기서 처리
+      window.handleAvatarUpload(file);
       await syncCurrentSessionToSupabase().catch(console.error);
     }
     event.target.value = "";
   });
 
-  // Ctrl/Cmd + Enter 로 로그 추가
-  document.getElementById("logInput")?.addEventListener("keydown", async event => {
-    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
-      const before = currentSession?.logs?.[currentSession.logs.length - 1]?.id || null;
-      addLog();
-      await syncLatestLogToSupabase(before).catch(console.error);
-    }
-  });
+  /* =========================
+     기타
+  ========================= */
+
+  document.getElementById("exportMarkdownBtn")?.addEventListener("click", window.exportCurrentSessionMarkdown);
 });
