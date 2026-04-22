@@ -35,11 +35,25 @@ function updateCurrentSessionRef() {
   currentSession = getCurrentSession();
   if (!currentSession) return;
 
-  if (!currentSession.characters) { 
-    currentSession.characters = createDefaultCharacters();
+  // characters 안전 보정
+  if (!Array.isArray(currentSession.characters)) {
+    currentSession.characters = [];
   }
 
-  if (!currentSession.selectedCharacterId && currentSession.characters.length > 0) {
+  // 선택된 캐릭터가 삭제됐을 경우 처리
+  if (
+    currentSession.selectedCharacterId &&
+    !currentSession.characters.some(c => c.id === currentSession.selectedCharacterId)
+  ) {
+    currentSession.selectedCharacterId =
+      currentSession.characters[0]?.id || null;
+  }
+
+  // 아무도 선택 안 되어 있으면 자동 선택
+  if (
+    !currentSession.selectedCharacterId &&
+    currentSession.characters.length > 0
+  ) {
     currentSession.selectedCharacterId = currentSession.characters[0].id;
   }
 
@@ -102,14 +116,23 @@ function addLog() {
 
   if (!text) return;
 
-  const speakerId = type === "dialogue" ? speakerSelect?.value || null : null;
+  // 🔥 핵심 추가
+  if (type === "dialogue" && currentSession.characters.length === 0) {
+    alert("먼저 캐릭터를 추가해 주세요.");
+    return;
+  }
+
+  const speakerId = type === "dialogue"
+    ? speakerSelect?.value || null
+    : null;
+
   const character = currentSession.characters.find(c => c.id === speakerId);
 
   const log = {
-    id: "log_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+    id: "log_" + Date.now(),
     type,
     speakerId: character?.id || null,
-    speakerName: character?.name || (type === "system" ? "시스템" : "메모"),
+    speakerName: character?.name || "삭제된 캐릭터",
     text,
     createdAt: new Date().toISOString()
   };
@@ -117,7 +140,6 @@ function addLog() {
   currentSession.logs.push(log);
 
   if (input) input.value = "";
-  persistAndRefresh();
 }
 
 function clearComposer() {
@@ -262,7 +284,7 @@ function renderSessionHeader() {
 }
 
 function populateCharacterSelects() {
-  if (!currentSession || !currentSession.characters) return;
+  if (!currentSession || !Array.isArray(currentSession.characters)) return;
 
   const ids = ["speakerSelect", "characterSelect", "diceCharacter"];
 
@@ -280,6 +302,17 @@ function populateCharacterSelects() {
     });
   });
 
+  if (currentSession.characters.length === 0) {
+    const skillSelect = document.getElementById("diceSkill");
+    const targetInput = document.getElementById("diceTarget");
+
+    if (skillSelect) skillSelect.innerHTML = "";
+    if (targetInput) targetInput.value = "";
+
+    return;
+  }
+
+  // 캐릭터 있을 때만 실행
   ["speakerSelect", "characterSelect", "diceCharacter"].forEach(id => {
     const select = document.getElementById(id);
     if (select && selectedCharacterId) {
