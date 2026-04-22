@@ -49,23 +49,43 @@
 }
 
 .log-card.dialogue.user-tone {
-  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--log-user) 30%, var(--panel-2)));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--session-card-bg) 82%, transparent),
+    color-mix(in srgb, var(--log-user) 20%, var(--panel-2))
+  );
 }
 
 .log-card.dialogue.partner-tone {
-  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--log-partner) 30%, var(--panel-2)));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--session-card-bg) 82%, transparent),
+    color-mix(in srgb, var(--log-partner) 20%, var(--panel-2))
+  );
 }
 
 .log-card.system {
-  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--log-system) 36%, var(--panel-2)));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--session-card-bg) 86%, transparent),
+    color-mix(in srgb, var(--log-system) 18%, var(--panel-2))
+  );
 }
 
 .log-card.roll {
-  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--log-roll) 28%, var(--panel-2)));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--session-card-bg) 86%, transparent),
+    color-mix(in srgb, var(--log-roll) 18%, var(--panel-2))
+  );
 }
 
 .log-card.note {
-  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--log-note) 28%, var(--panel-2)));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--session-card-bg) 86%, transparent),
+    color-mix(in srgb, var(--log-note) 18%, var(--panel-2))
+  );
 }
 
 .log-header {
