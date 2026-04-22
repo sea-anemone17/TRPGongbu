@@ -53,13 +53,20 @@ function createSession() {
   const session = createDefaultSession();
   const customTitle = titleInput.value.trim();
   const customSubject = subjectInput.value.trim();
+
   if (customTitle) session.title = customTitle;
   if (customSubject) session.subject = customSubject;
 
   appState.sessions.unshift(session);
+
+  if (!appState.openTabs.includes(session.id)) {
+    appState.openTabs.push(session.id);
+  }
+
   appState.currentSessionId = session.id;
   updateCurrentSessionRef();
   selectedCharacterId = session.characters[0]?.id || null;
+
   saveAppState(appState);
   titleInput.value = "";
   subjectInput.value = "";
@@ -67,10 +74,7 @@ function createSession() {
 }
 
 function selectSession(sessionId) {
-  appState.currentSessionId = sessionId;
-  updateCurrentSessionRef();
-  saveAppState(appState);
-  renderAll();
+  openSessionInTab(sessionId);
 }
 
 function addLog() {
@@ -130,7 +134,7 @@ function renderSessionList() {
         <p>${escapeHtml(session.subject || "태그 없음")}</p>
       </div>
     `;
-    card.addEventListener("click", () => selectSession(session.id));
+    card.addEventListener("click", () => openSessionInTab(session.id));
     wrap.appendChild(card);
   });
 }
@@ -322,9 +326,44 @@ function handleAvatarUpload(file) {
 function renderAll() {
   updateCurrentSessionRef();
   renderSessionList();
+  renderTabs();
   renderSessionHeader();
   populateCharacterSelects();
   renderCharacterCard();
   renderLogs();
   renderTimer();
+}
+
+function openSessionInTab(sessionId) {
+  if (!appState.openTabs.includes(sessionId)) {
+    appState.openTabs.push(sessionId);
+  }
+  appState.currentSessionId = sessionId;
+  updateCurrentSessionRef();
+  saveAppState(appState);
+  renderAll();
+}
+
+function closeTab(sessionId) {
+  if (!appState.openTabs.includes(sessionId)) return;
+
+  appState.openTabs = appState.openTabs.filter(id => id !== sessionId);
+
+  if (appState.openTabs.length === 0) {
+    appState.openTabs = [sessionId];
+    return;
+  }
+
+  if (appState.currentSessionId === sessionId) {
+    appState.currentSessionId = appState.openTabs[appState.openTabs.length - 1];
+  }
+
+  updateCurrentSessionRef();
+  saveAppState(appState);
+  renderAll();
+}
+
+function shortenTabTitle(title, max = 18) {
+  if (title.length <= max) return title;
+  return title.slice(0, max) + "...";
 }
