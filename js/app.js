@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("diceSkill")?.addEventListener("change", syncDiceTargetFromSkill);
   document.getElementById("rollDiceBtn")?.addEventListener("click", rollDice);
+  document.getElementById("exportMarkdownBtn")?.addEventListener("click", exportCurrentSessionMarkdown);
 
   document.getElementById("characterSelect")?.addEventListener("change", event => {
     selectedCharacterId = event.target.value;
