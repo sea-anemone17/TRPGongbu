@@ -840,3 +840,32 @@ body[data-theme="dark"] #authStatus::before {
   flex-wrap: wrap;
   justify-content: flex-end;
 }
+
+.log-panel {
+  min-width: 500px;
+}
+
+.main-area {
+  display: grid;
+  grid-template-columns: 260px minmax(500px, 1fr) 320px;
+}
+
+@media (max-width: 1200px) {
+  .main-area {
+    grid-template-columns: 260px 1fr;
+  }
+
+  .utility-panel {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+
+  .main-area {
+    grid-template-columns: 1fr;
+  }
+}
