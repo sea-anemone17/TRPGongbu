@@ -212,6 +212,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       saveAppState(window.appState);
     }
 
+  // 🔥 여기 추가
+    const characterSelect = document.getElementById("characterSelect");
+    const speakerSelect = document.getElementById("speakerSelect");
+    const diceCharacter = document.getElementById("diceCharacter");
+
+    if (characterSelect) characterSelect.value = window.selectedCharacterId;
+    if (speakerSelect) speakerSelect.value = window.selectedCharacterId;
+    if (diceCharacter) diceCharacter.value = window.selectedCharacterId;
+
     window.populateSkillSelect();
     window.renderCharacterCard();
   });
