@@ -450,15 +450,15 @@ body[data-theme="yellow"] .ghost-btn {
 
 .session-card {
   display: flex;
-  gap: 12px;
   align-items: center;
+  gap: 12px;
+  width: 100%;
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 10px;
   cursor: pointer;
   background: rgba(255,255,255,0.03);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.05) inset;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset;
   transition:
     border-color .16s ease,
     transform .16s ease,
@@ -495,17 +495,19 @@ body[data-theme="yellow"] .ghost-btn {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
 }
 
-.session-meta h4 {
-  margin: 0 0 4px;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+.session-meta {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
 }
 
+.session-meta h4,
 .session-meta p {
   margin: 0;
-  font-size: 12px;
-  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: keep-all;
 }
 
 .log-container {
@@ -732,20 +734,19 @@ body[data-theme="yellow"] .ghost-btn {
 
 .session-delete-btn {
   margin-left: auto;
-  border: 0;
-  background: rgba(255,255,255,0.08);
-  color: var(--muted);
-  border: 1px solid var(--line);
+  flex-shrink: 0;
   width: 34px;
   height: 34px;
+  border: 1px solid var(--line);
   border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  color: var(--muted);
   cursor: pointer;
   transition: transform .16s ease, opacity .16s ease, background .16s ease;
 }
 
 .session-delete-btn:hover {
   transform: translateY(-1px);
-  opacity: 1;
   color: var(--danger);
   background: rgba(251, 113, 133, 0.10);
 }
@@ -793,39 +794,6 @@ body[data-theme="dark"] #authStatus::before {
   color: #7aa2ff;
 }
 
-.session-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-}
-
-.session-meta {
-  flex: 1;
-  min-width: 0;
-  text-align: left;
-}
-
-.session-meta h4,
-.session-meta p {
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: keep-all;
-}
-
-.session-delete-btn {
-  flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: rgba(255,255,255,0.08);
-  color: var(--text);
-  cursor: pointer;
-}
-
 .panel-head.sticky-head {
   display: flex;
   justify-content: space-between;
@@ -842,30 +810,55 @@ body[data-theme="dark"] #authStatus::before {
 }
 
 .log-panel {
-  min-width: 500px;
+  min-width: 0;
 }
 
-.main-area {
-  display: grid;
-  grid-template-columns: 260px minmax(500px, 1fr) 320px;
+/* 로그인 영역 */
+#authStatus {
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.8;
 }
 
+#authStatus::before {
+  content: "● ";
+  color: #999;
+}
+
+body[data-theme="dark"] #authStatus::before {
+  color: #7aa2ff;
+}
+
+.toolbar-block .composer-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.toolbar-block input.text-input {
+  margin-bottom: 6px;
+}
+
+/* 태블릿 */
 @media (max-width: 1200px) {
   .main-area {
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: 280px minmax(0, 1fr);
   }
 
   .utility-panel {
-    display: none;
+    grid-column: 1 / -1;
   }
 }
 
-@media (max-width: 900px) {
-  .sidebar {
-    display: none;
-  }
-
+/* 모바일 */
+@media (max-width: 820px) {
   .main-area {
     grid-template-columns: 1fr;
+  }
+
+  .composer-row {
+    flex-direction: column;
   }
 }
