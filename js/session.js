@@ -585,3 +585,72 @@ function renderTabs() {
     bar.appendChild(tab);
   });
 }
+
+function downloadFile(filename, content, mimeType = "text/plain") {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function convertSessionToMarkdown(session) {
+  if (!session) return "";
+
+  const lines = [];
+
+  lines.push(`# ${session.title || "제목 없는 세션"}`);
+  lines.push("");
+  lines.push(`- 과목: ${session.subject || "없음"}`);
+  lines.push(`- 목표: ${session.goal || "없음"}`);
+  lines.push(`- 생성일: ${session.createdAt || ""}`);
+  lines.push("");
+  lines.push("---");
+  lines.push("");
+
+  session.logs.forEach(log => {
+    const time = log.createdAt
+      ? new Date(log.createdAt).toLocaleTimeString("ko-KR", {
+          hour: "2-digit",
+          minute: "2-digit"
+        })
+      : "";
+
+    const label = LOG_TYPE_LABELS[log.type] || log.type;
+    const speaker = log.speakerName || "시스템";
+
+    lines.push(`## ${speaker} [${label}] ${time}`);
+    lines.push(log.text || "");
+
+    if (log.type === "roll") {
+      const outcomeLabel = {
+        critical: "크리티컬",
+        extreme: "극단적 성공",
+        hard: "어려운 성공",
+        success: "성공",
+        failure: "실패",
+        fumble: "펌블"
+      }[log.outcome] || "판정";
+
+      lines.push(`→ ${outcomeLabel}`);
+    }
+
+    lines.push("");
+  });
+
+  return lines.join("\\n");
+}
+
+function exportCurrentSessionMarkdown() {
+  if (!currentSession) return;
+
+  const md = convertSessionToMarkdown(currentSession);
+  const safeTitle = (currentSession.title || "session")
+    .replace(/[\\\\/:*?"<>|]/g, "_");
+
+  downloadFile(`${safeTitle}.md`, md, "text/markdown");
+}
