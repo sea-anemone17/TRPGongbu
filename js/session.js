@@ -454,6 +454,34 @@ function shortenTabTitle(title, max = 18) {
   return title.slice(0, max) + "...";
 }
 
+function deleteSession(sessionId) {
+  if (!confirm("이 세션을 삭제하시겠습니까?")) return;
+
+  // sessions에서 제거
+  appState.sessions = appState.sessions.filter(s => s.id !== sessionId);
+
+  // openTabs에서도 제거
+  appState.openTabs = appState.openTabs.filter(id => id !== sessionId);
+
+  // currentSession 재설정
+  if (appState.currentSessionId === sessionId) {
+    const next = appState.openTabs[0] || appState.sessions[0];
+    appState.currentSessionId = next ? (next.id || next) : null;
+  }
+
+  // 세션이 하나도 없으면 새로 생성
+  if (appState.sessions.length === 0) {
+    const newSession = createDefaultSession();
+    appState.sessions.push(newSession);
+    appState.currentSessionId = newSession.id;
+    appState.openTabs = [newSession.id];
+  }
+
+  updateCurrentSessionRef();
+  saveAppState(appState);
+  renderAll();
+}
+
 function renderTabs() {
   const bar = document.getElementById("tabBar");
   if (!bar) return;
