@@ -157,7 +157,15 @@ function renderSessionList() {
         <h4>${escapeHtml(session.title)}</h4>
         <p>${escapeHtml(session.subject || "태그 없음")}</p>
       </div>
+      <button class="session-delete-btn" type="button" title="세션 삭제">🗑</button>
     `;
+
+    const deleteBtn = card.querySelector(".session-delete-btn");
+    deleteBtn?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      deleteSession(session.id);
+    });
+    
 
     card.addEventListener("click", () => openSessionInTab(session.id));
     wrap.appendChild(card);
@@ -404,6 +412,28 @@ function handleAvatarUpload(file) {
     persistAndRefresh();
   };
   reader.readAsDataURL(file);
+}
+
+function deleteCharacter() {
+  if (!currentSession || !selectedCharacterId) return;
+  if (currentSession.characters.length <= 1) {
+    alert("캐릭터는 최소 1명 이상 있어야 합니다.");
+    return;
+  }
+
+  const target = getCharacterById(selectedCharacterId);
+  const ok = confirm(`"${target?.name || "이 캐릭터"}"를 삭제하시겠습니까?`);
+  if (!ok) return;
+
+  currentSession.characters = currentSession.characters.filter(
+    c => c.id !== selectedCharacterId
+  );
+
+  const next = currentSession.characters[0] || null;
+  selectedCharacterId = next ? next.id : null;
+  currentSession.selectedCharacterId = selectedCharacterId;
+
+  persistAndRefresh();
 }
 
 function renderAll() {
