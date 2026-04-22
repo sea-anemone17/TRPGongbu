@@ -844,11 +844,7 @@ body[data-theme="dark"] #authStatus::before {
 /* 태블릿 */
 @media (max-width: 1200px) {
   .main-area {
-    grid-template-columns: 280px minmax(0, 1fr);
-  }
-
-  .utility-panel {
-    grid-column: 1 / -1;
+    grid-template-columns: 220px minmax(0, 1fr) 260px;
   }
 }
 
