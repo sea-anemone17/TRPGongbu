@@ -1,154 +1,125 @@
 .log-card {
   position: relative;
-  border: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
-  border-radius: 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
   padding: 14px 16px;
-  margin-bottom: 14px;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--panel) 88%, white 12%),
-      color-mix(in srgb, var(--panel) 96%, transparent)
-    );
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.08),
-    0 1px 0 rgba(255, 255, 255, 0.08) inset;
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  margin-bottom: 12px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
   transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    border-color 0.18s ease;
+    border-color 0.16s ease,
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
 }
 
 .log-card:hover {
   transform: translateY(-1px);
-  box-shadow:
-    0 16px 36px rgba(0, 0, 0, 0.10),
-    0 1px 0 rgba(255, 255, 255, 0.10) inset;
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  border-color: var(--line-strong);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10);
 }
 
 .log-card::before {
   content: "";
   position: absolute;
-  inset: 0 0 auto 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,0.32),
-    transparent
-  );
-  pointer-events: none;
+  inset: 0 auto 0 0;
+  width: 3px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.log-card.dialogue.user-tone::before {
+  background: var(--accent);
+}
+
+.log-card.dialogue.partner-tone::before {
+  background: var(--accent-2);
+}
+
+.log-card.system::before {
+  background: rgba(255,255,255,0.22);
+}
+
+.log-card.roll::before {
+  background: var(--warning);
+}
+
+.log-card.note::before {
+  background: #a78bfa;
 }
 
 .log-card.dialogue.user-tone {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--log-user) 72%, var(--panel) 28%),
-      color-mix(in srgb, var(--panel) 92%, transparent)
-    );
+  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--log-user) 30%, var(--panel-2)));
 }
 
 .log-card.dialogue.partner-tone {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--log-partner) 72%, var(--panel) 28%),
-      color-mix(in srgb, var(--panel) 92%, transparent)
-    );
+  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--log-partner) 30%, var(--panel-2)));
 }
 
 .log-card.system {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--log-system) 76%, var(--panel) 24%),
-      color-mix(in srgb, var(--panel) 92%, transparent)
-    );
+  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--log-system) 36%, var(--panel-2)));
 }
 
 .log-card.roll {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--log-roll) 72%, var(--panel) 28%),
-      color-mix(in srgb, var(--panel) 92%, transparent)
-    );
+  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--log-roll) 28%, var(--panel-2)));
 }
 
 .log-card.note {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--log-note) 72%, var(--panel) 28%),
-      color-mix(in srgb, var(--panel) 92%, transparent)
-    );
+  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--log-note) 28%, var(--panel-2)));
 }
 
 .log-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 14px;
+  gap: 12px;
   margin-bottom: 10px;
 }
 
 .log-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
-.log-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
-  object-fit: cover;
-  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
-  background: rgba(255,255,255,0.16);
-  box-shadow:
-    0 6px 14px rgba(0,0,0,0.10),
-    0 1px 0 rgba(255,255,255,0.10) inset;
+.log-avatar,
+.log-avatar-fallback {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
   flex-shrink: 0;
 }
 
+.log-avatar {
+  object-fit: cover;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.10);
+}
+
 .log-avatar-fallback {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
   display: grid;
   place-items: center;
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: -0.02em;
   color: white;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  box-shadow:
-    0 8px 18px rgba(0,0,0,0.12),
-    0 1px 0 rgba(255,255,255,0.10) inset;
-  flex-shrink: 0;
 }
 
 .log-speaker {
   font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 680;
+  line-height: 1.25;
   color: var(--text);
-  line-height: 1.2;
+  letter-spacing: -0.015em;
 }
 
 .log-sub {
   margin-top: 2px;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.01em;
   color: var(--muted);
-  opacity: 0.92;
+  letter-spacing: 0;
 }
 
 .log-time {
@@ -159,18 +130,17 @@
   white-space: nowrap;
   padding: 4px 8px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--line);
 }
 
 .log-body {
   font-size: 14px;
-  line-height: 1.72;
-  letter-spacing: -0.01em;
+  line-height: 1.68;
+  letter-spacing: -0.012em;
   white-space: pre-wrap;
   word-break: break-word;
-  color: color-mix(in srgb, var(--text) 96%, transparent);
-  padding-left: 2px;
+  color: var(--text);
 }
 
 .roll-badge {
@@ -179,63 +149,50 @@
   gap: 6px;
   margin-top: 12px;
   border-radius: 999px;
-  padding: 7px 12px;
+  padding: 6px 10px;
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  border: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
-  box-shadow:
-    0 4px 12px rgba(0,0,0,0.06),
-    0 1px 0 rgba(255,255,255,0.08) inset;
+  font-weight: 700;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.04);
 }
 
 .roll-badge.success {
-  background: rgba(52, 211, 153, 0.14);
   color: var(--success);
+  background: rgba(52, 211, 153, 0.10);
 }
 
 .roll-badge.hard {
-  background: rgba(103, 232, 249, 0.16);
   color: #0891b2;
+  background: rgba(103, 232, 249, 0.10);
 }
 
 .roll-badge.extreme {
-  background: rgba(124, 157, 255, 0.16);
   color: var(--accent);
+  background: rgba(124, 157, 255, 0.10);
 }
 
 .roll-badge.failure {
-  background: rgba(251, 113, 133, 0.14);
   color: var(--danger);
+  background: rgba(251, 113, 133, 0.10);
 }
 
 .roll-badge.fumble {
-  background: rgba(239, 68, 68, 0.16);
   color: #dc2626;
+  background: rgba(239, 68, 68, 0.12);
 }
 
 .roll-badge.critical {
-  background: rgba(250, 204, 21, 0.18);
   color: #ca8a04;
+  background: rgba(250, 204, 21, 0.12);
 }
 
 .empty-state {
-  border: 1px dashed color-mix(in srgb, var(--line) 75%, transparent);
-  border-radius: 24px;
-  padding: 40px 20px;
+  border: 1px dashed var(--line);
+  border-radius: 18px;
+  padding: 36px 20px;
   text-align: center;
   color: var(--muted);
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.05),
-      rgba(255,255,255,0.02)
-    );
-  backdrop-filter: blur(12px) saturate(130%);
-  -webkit-backdrop-filter: blur(12px) saturate(130%);
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.06),
-    0 1px 0 rgba(255,255,255,0.06) inset;
+  background: rgba(255,255,255,0.03);
   font-size: 14px;
   line-height: 1.7;
 }
