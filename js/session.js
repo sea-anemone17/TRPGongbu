@@ -345,11 +345,22 @@ function populateSkillSelect() {
 
   if (!char) return;
 
-  Object.entries(char.stats).forEach(([key, value]) => {
+  ensureCocCharacter(char);
+
+  const skillLabels = {
+    spotHidden: "관찰력",
+    listen: "듣기",
+    psychology: "심리학",
+    persuade: "설득",
+    law: "법률",
+    libraryUse: "자료조사"
+  };
+
+  Object.entries(char.coc.skills).forEach(([key, value]) => {
     const option = document.createElement("option");
     option.value = key;
     option.dataset.target = value;
-    option.textContent = `${SKILL_LABELS[key] || key} (${value})`;
+    option.textContent = `${skillLabels[key] || key} (${value})`;
     skillSelect.appendChild(option);
   });
 
