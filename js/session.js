@@ -420,31 +420,56 @@ function populateCharacterSelects() {
 function populateSkillSelect() {
   const diceCharacter = document.getElementById("diceCharacter");
   const skillSelect = document.getElementById("diceSkill");
+  const modeSelect = document.getElementById("diceMode");
+
   if (!diceCharacter || !skillSelect) return;
 
   const char = getCharacterById(diceCharacter.value);
+  const mode = modeSelect?.value || "skill";
+
   skillSelect.innerHTML = "";
 
   if (!char) return;
 
   ensureCocCharacter(char);
 
-  const skillLabels = {
-    spotHidden: "관찰력",
-    listen: "듣기",
-    psychology: "심리학",
-    persuade: "설득",
-    law: "법률",
-    libraryUse: "자료조사"
-  };
+  if (mode === "attribute") {
+    const attributeLabels = {
+      str: "STR",
+      con: "CON",
+      siz: "SIZ",
+      dex: "DEX",
+      app: "APP",
+      int: "INT",
+      pow: "POW",
+      edu: "EDU"
+    };
 
-  Object.entries(char.coc.skills).forEach(([key, value]) => {
-    const option = document.createElement("option");
-    option.value = key;
-    option.dataset.target = value;
-    option.textContent = `${skillLabels[key] || key} (${value})`;
-    skillSelect.appendChild(option);
-  });
+    Object.entries(char.coc.attributes).forEach(([key, value]) => {
+      const option = document.createElement("option");
+      option.value = key;
+      option.dataset.target = value;
+      option.textContent = `${attributeLabels[key] || key} (${value})`;
+      skillSelect.appendChild(option);
+    });
+  } else {
+    const skillLabels = {
+      spotHidden: "관찰력",
+      listen: "듣기",
+      psychology: "심리학",
+      persuade: "설득",
+      law: "법률",
+      libraryUse: "자료조사"
+    };
+
+    Object.entries(char.coc.skills).forEach(([key, value]) => {
+      const option = document.createElement("option");
+      option.value = key;
+      option.dataset.target = value;
+      option.textContent = `${skillLabels[key] || key} (${value})`;
+      skillSelect.appendChild(option);
+    });
+  }
 
   syncDiceTargetFromSkill();
 }
