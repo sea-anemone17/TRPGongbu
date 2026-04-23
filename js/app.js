@@ -1,5 +1,8 @@
 import { getCurrentUser, signUp, signIn, signOut } from "./auth.js";
 import {
+  fetchSessions,
+  fetchLogs,
+  fetchCharacters,
   upsertSession,
   insertLog,
   upsertCharacter,
@@ -53,6 +56,78 @@ async function syncLatestLogToSupabase(previousLastLogId = null) {
 
   await insertLog(latestLog, session.id, user.id);
   await upsertSession(session, user.id);
+}
+
+async function loadFromSupabase() {
+  const user = await getCurrentUser().catch(() => null);
+  if (!user) return;
+
+  const sessions = await fetchSessions(user.id).catch(err => {
+    console.error(err);
+    return [];
+  });
+
+  if (!sessions || sessions.length === 0) return;
+
+  const mappedSessions = [];
+
+  for (const session of sessions) {
+    const logs = await fetchLogs(session.id, user.id).catch(err => {
+      console.error(err);
+      return [];
+    });
+
+    const characters = await fetchCharacters(session.id, user.id).catch(err => {
+      console.error(err);
+      return [];
+    });
+
+    mappedSessions.push({
+      id: session.id,
+      title: session.title || "새 세션",
+      subject: session.subject || "",
+      goal: session.goal || "",
+      coverImage: session.cover_image_path || "",
+      selectedCharacterId: session.selected_character_id || null,
+      createdAt: session.created_at,
+      updatedAt: session.updated_at,
+      timer: {
+        durationSec: session.timer_duration_sec ?? 1500,
+        remainingSec: session.timer_remaining_sec ?? 1500,
+        isRunning: session.timer_is_running ?? false,
+        lastStartedAt: session.timer_last_started_at
+          ? new Date(session.timer_last_started_at).getTime()
+          : null
+      },
+      logs: (logs || []).map(log => ({
+        id: log.id,
+        type: log.type,
+        speakerId: log.speaker_id,
+        speakerName: log.speaker_name,
+        text: log.text,
+        roll: log.roll,
+        target: log.target,
+        outcome: log.outcome,
+        createdAt: log.created_at
+      })),
+      characters: (characters || []).map(char => ({
+        id: char.id,
+        name: char.name || "새 탐사자",
+        avatar: char.avatar_path || "",
+        color: char.color || "#7aa2ff",
+        description: char.description || "",
+        coc: char.coc || {}
+      }))
+    });
+  }
+
+  window.appState.sessions = mappedSessions;
+  window.appState.currentSessionId = mappedSessions[0]?.id || null;
+  window.appState.openTabs = mappedSessions.length > 0 ? [mappedSessions[0].id] : [];
+
+  saveAppState(window.appState);
+  window.updateCurrentSessionRef();
+  window.renderAll();
 }
 
 /* =========================
@@ -145,6 +220,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   ========================= */
 
   await refreshAuthStatus();
+  await loadFromSupabase();
 
   document.getElementById("signUpBtn")?.addEventListener("click", async () => {
     const email = document.getElementById("authEmail")?.value.trim();
@@ -160,7 +236,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert("회원가입 완료");
       await refreshAuthStatus();
     } catch (err) {
-      alert(err.message);
+      console.error(err);
+      alert(err.message || "회원가입 중 오류가 발생했습니다.");
     }
   });
 
@@ -168,21 +245,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     const email = document.getElementById("authEmail")?.value.trim();
     const password = document.getElementById("authPassword")?.value.trim();
 
-    if (!email || !password) return;
+    if (!email || !password) {
+      alert("이메일과 비밀번호를 입력해 주세요.");
+      return;
+    }
 
     try {
       await signIn(email, password);
       alert("로그인됨");
       await refreshAuthStatus();
+      await loadFromSupabase();
     } catch (err) {
-      alert(err.message);
+      console.error(err);
+      alert(err.message || "로그인 중 오류가 발생했습니다.");
     }
   });
 
   document.getElementById("signOutBtn")?.addEventListener("click", async () => {
-    await signOut();
-    alert("로그아웃됨");
-    await refreshAuthStatus();
+    try {
+      await signOut();
+      alert("로그아웃됨");
+      await refreshAuthStatus();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "로그아웃 중 오류가 발생했습니다.");
+    }
   });
 
   /* =========================
@@ -213,7 +300,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       saveAppState(window.appState);
     }
 
-  // 🔥 여기 추가
     const characterSelect = document.getElementById("characterSelect");
     const speakerSelect = document.getElementById("speakerSelect");
     const diceCharacter = document.getElementById("diceCharacter");
@@ -234,7 +320,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       saveAppState(window.appState);
     }
 
-  // 🔥 여기 추가
+    const characterSelect = document.getElementById("characterSelect");
+    const speakerSelect = document.getElementById("speakerSelect");
+    const diceCharacter = document.getElementById("diceCharacter");
+
+    if (characterSelect) characterSelect.value = window.selectedCharacterId;
+    if (speakerSelect) speakerSelect.value = window.selectedCharacterId;
+    if (diceCharacter) diceCharacter.value = window.selectedCharacterId;
+
+    window.populateSkillSelect();
+    window.renderCharacterCard();
+  });
+
+  document.getElementById("diceCharacter")?.addEventListener("change", event => {
+    window.selectedCharacterId = event.target.value;
+
+    if (window.currentSession) {
+      window.currentSession.selectedCharacterId = window.selectedCharacterId;
+      saveAppState(window.appState);
+    }
+
     const characterSelect = document.getElementById("characterSelect");
     const speakerSelect = document.getElementById("speakerSelect");
     const diceCharacter = document.getElementById("diceCharacter");
