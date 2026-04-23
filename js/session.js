@@ -35,17 +35,16 @@ function updateCurrentSessionRef() {
   currentSession = getCurrentSession();
   if (!currentSession) return;
 
-  // characters 안전 보정
   if (!Array.isArray(currentSession.characters)) {
     currentSession.characters = [];
   }
 
-  // logs 안전 보정  ← 이 줄 추가
   if (!Array.isArray(currentSession.logs)) {
     currentSession.logs = [];
   }
 
-  // 선택된 캐릭터가 삭제됐을 경우 처리
+  currentSession.characters = currentSession.characters.map(char => ensureCocCharacter(char));
+
   if (
     currentSession.selectedCharacterId &&
     !currentSession.characters.some(c => c.id === currentSession.selectedCharacterId)
@@ -54,7 +53,6 @@ function updateCurrentSessionRef() {
       currentSession.characters[0]?.id || null;
   }
 
-  // 아무도 선택 안 되어 있으면 자동 선택
   if (
     !currentSession.selectedCharacterId &&
     currentSession.characters.length > 0
