@@ -181,6 +181,63 @@
               </div>
 
               <div class="character-basic">
+                <input id="characterNameInput" class="text-input" placeholder="탐사자 이름" />
+                <input id="characterColorInput" class="text-input" type="color" value="#7aa2ff" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="small-label" for="playerInput">플레이어</label>
+              <input id="playerInput" class="text-input" placeholder="플레이어 이름" />
+            </div>
+
+            <div class="field">
+              <label class="small-label" for="jobInput">직업</label>
+              <input id="jobInput" class="text-input" placeholder="직업" />
+            </div>
+
+            <div class="field">
+              <label class="small-label" for="characterDescInput">설명</label>
+              <textarea id="characterDescInput" class="textarea-input small" placeholder="탐사자 설명"></textarea>
+            </div>
+
+            <div class="field">
+              <label class="small-label" for="avatarInput">프사 업로드</label>
+              <input id="avatarInput" type="file" accept="image/*" class="file-input" />
+            </div>
+
+            <div class="section-head">
+              <h3>특성치</h3>
+            </div>
+            <div class="stats-grid">
+              <label>STR <input data-stat="str" class="stat-input" type="number" min="0" max="99"></label>
+              <label>CON <input data-stat="con" class="stat-input" type="number" min="0" max="99"></label>
+              <label>SIZ <input data-stat="siz" class="stat-input" type="number" min="0" max="99"></label>
+              <label>DEX <input data-stat="dex" class="stat-input" type="number" min="0" max="99"></label>
+              <label>APP <input data-stat="app" class="stat-input" type="number" min="0" max="99"></label>
+              <label>INT <input data-stat="int" class="stat-input" type="number" min="0" max="99"></label>
+              <label>POW <input data-stat="pow" class="stat-input" type="number" min="0" max="99"></label>
+              <label>EDU <input data-stat="edu" class="stat-input" type="number" min="0" max="99"></label>
+            </div>
+
+            <div class="section-head" style="margin-top:12px;">
+              <h3>파생치</h3>
+            </div>
+            <div class="stats-grid">
+              <label>HP <input id="hpInput" class="stat-input" type="number" min="0"></label>
+              <label>MP <input id="mpInput" class="stat-input" type="number" min="0"></label>
+              <label>SAN <input id="sanInput" class="stat-input" type="number" min="0" max="99"></label>
+              <label>LUCK <input id="luckInput" class="stat-input" type="number" min="0" max="99"></label>
+            </div>
+
+            <div class="composer-actions">
+              <button id="saveCharacterBtn" class="primary-btn">캐릭터 저장</button>
+              <button id="addCharacterBtn" class="ghost-btn">+ 캐릭터 추가</button>
+              <button id="deleteCharacterBtn" class="ghost-btn">캐릭터 삭제</button>
+            </div>
+          </div>
+
+              <div class="character-basic">
                 <input id="characterNameInput" class="text-input" placeholder="이름" />
                 <input id="characterColorInput" class="text-input" type="color" value="#7aa2ff" />
               </div>
