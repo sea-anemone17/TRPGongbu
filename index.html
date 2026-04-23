@@ -38,7 +38,6 @@
           <div id="sessionList" class="session-list"></div>
         </div>
 
-        <!-- ✅ 계정 섹션은 sidebar 안 -->
         <section class="toolbar-block">
           <div class="section-head">
             <h2>계정</h2>
@@ -230,39 +229,7 @@
               <label>LUCK <input id="luckInput" class="stat-input" type="number" min="0" max="99"></label>
             </div>
 
-            <div class="composer-actions">
-              <button id="saveCharacterBtn" class="primary-btn">캐릭터 저장</button>
-              <button id="addCharacterBtn" class="ghost-btn">+ 캐릭터 추가</button>
-              <button id="deleteCharacterBtn" class="ghost-btn">캐릭터 삭제</button>
-            </div>
-          </div>
-
-              <div class="character-basic">
-                <input id="characterNameInput" class="text-input" placeholder="이름" />
-                <input id="characterColorInput" class="text-input" type="color" value="#7aa2ff" />
-              </div>
-            </div>
-
-            <div class="field">
-              <label class="small-label" for="characterDescInput">설명</label>
-              <textarea id="characterDescInput" class="textarea-input small" placeholder="캐릭터 설명"></textarea>
-            </div>
-
-            <div class="field">
-              <label class="small-label" for="avatarInput">프사 업로드</label>
-              <input id="avatarInput" type="file" accept="image/*" class="file-input" />
-            </div>
-
-            <div class="stats-grid">
-              <label>관찰 <input data-stat="observe" class="stat-input" type="number" min="1" max="99"></label>
-              <label>통찰 <input data-stat="insight" class="stat-input" type="number" min="1" max="99"></label>
-              <label>설득 <input data-stat="persuade" class="stat-input" type="number" min="1" max="99"></label>
-              <label>논리 <input data-stat="logic" class="stat-input" type="number" min="1" max="99"></label>
-              <label>심리학 <input data-stat="psychology" class="stat-input" type="number" min="1" max="99"></label>
-              <label>법학 <input data-stat="law" class="stat-input" type="number" min="1" max="99"></label>
-            </div>
-
-            <div class="composer-actions">
+            <div class="composer-actions" style="margin-top:12px;">
               <button id="saveCharacterBtn" class="primary-btn">캐릭터 저장</button>
               <button id="addCharacterBtn" class="ghost-btn">+ 캐릭터 추가</button>
               <button id="deleteCharacterBtn" class="ghost-btn">캐릭터 삭제</button>
