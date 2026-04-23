@@ -433,8 +433,9 @@ function populateSkillSelect() {
 
   ensureCocCharacter(char);
 
+  // 🔵 특성치
   if (mode === "attribute") {
-    const attributeLabels = {
+    const labels = {
       str: "STR",
       con: "CON",
       siz: "SIZ",
@@ -449,11 +450,14 @@ function populateSkillSelect() {
       const option = document.createElement("option");
       option.value = key;
       option.dataset.target = value;
-      option.textContent = `${attributeLabels[key] || key} (${value})`;
+      option.textContent = `${labels[key]} (${value})`;
       skillSelect.appendChild(option);
     });
-  } else {
-    const skillLabels = {
+  }
+
+  // 🟡 기능치
+  else if (mode === "skill") {
+    const labels = {
       spotHidden: "관찰력",
       listen: "듣기",
       psychology: "심리학",
@@ -466,7 +470,34 @@ function populateSkillSelect() {
       const option = document.createElement("option");
       option.value = key;
       option.dataset.target = value;
-      option.textContent = `${skillLabels[key] || key} (${value})`;
+      option.textContent = `${labels[key]} (${value})`;
+      skillSelect.appendChild(option);
+    });
+  }
+
+  // 🔴 파생치
+  else if (mode === "derived") {
+    const derived = char.coc.derived;
+
+    const map = {
+      hp: derived.hp.current,
+      mp: derived.mp.current,
+      san: derived.san.current,
+      luck: derived.luck
+    };
+
+    const labels = {
+      hp: "HP",
+      mp: "MP",
+      san: "SAN",
+      luck: "LUCK"
+    };
+
+    Object.entries(map).forEach(([key, value]) => {
+      const option = document.createElement("option");
+      option.value = key;
+      option.dataset.target = value;
+      option.textContent = `${labels[key]} (${value})`;
       skillSelect.appendChild(option);
     });
   }
