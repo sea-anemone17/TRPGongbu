@@ -666,7 +666,7 @@ body[data-theme="dark"] #authStatus::before {
 .character-card {
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: 14px;
+  padding: 16px;
   background: rgba(255, 255, 255, 0.03);
 }
 
@@ -764,5 +764,32 @@ body[data-theme="dark"] #authStatus::before {
   .composer-row,
   .character-top {
     flex-direction: column;
+  }
+}
+
+/* ===== CoC character sheet additions ===== */
+
+.character-card .section-head {
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
+
+.character-card .section-head:first-of-type {
+  margin-top: 0;
+}
+
+.stats-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.character-card .field + .section-head {
+  margin-top: 16px;
+}
+
+@media (max-width: 520px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }
