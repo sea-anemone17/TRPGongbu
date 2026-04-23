@@ -2,7 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js";
 
 export const supabase = createClient(
   "https://mapuxrdihpqjjojjczpw.supabase.co",
-  "sb_publishable_cyuGywumxxQUaXWErHHX3g_eTwe4j7e"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hcHV4cmRpaHBxampvampjenB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4MzY3NzcsImV4cCI6MjA5MjQxMjc3N30.VYyqWMKyb3Aa5v5obZaVrf751pqbKmUZ7eTsfk1EUcc"
 );
 
 // ===== Session =====
@@ -110,7 +110,7 @@ export async function upsertCharacter(character, sessionId, userId) {
     avatar_path: character.avatar || null,
     color: character.color || "#7aa2ff",
     description: character.description || "",
-    stats: character.stats || {},
+    coc: character.coc || {},
     created_at: character.createdAt || new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
