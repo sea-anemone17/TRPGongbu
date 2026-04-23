@@ -426,26 +426,13 @@ function saveCurrentCharacter() {
 function addCharacter() {
   if (!currentSession) return;
 
-  const id = "char_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
+  const char = createDefaultCharacter();
 
-  currentSession.characters.push({
-    id,
-    name: "새 캐릭터",
-    avatar: "",
-    color: "#a78bfa",
-    description: "",
-    stats: {
-      observe: 50,
-      insight: 50,
-      persuade: 50,
-      logic: 50,
-      psychology: 50,
-      law: 50
-    }
-  });
+  currentSession.characters.push(char);
 
-  selectedCharacterId = id;
-  currentSession.selectedCharacterId = id;
+  selectedCharacterId = char.id;
+  currentSession.selectedCharacterId = char.id;
+
   persistAndRefresh();
 }
 
