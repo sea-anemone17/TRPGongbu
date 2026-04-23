@@ -1,4 +1,3 @@
-
 function evaluateRoll(roll, target) {
   if (roll === 100) return "fumble";
   if (roll === 1) return "critical";
@@ -17,23 +16,35 @@ function rollDice() {
 
   const character = getCharacterById(charSelect.value);
   const skillKey = skillSelect.value;
-  const skillName = SKILL_LABELS[skillKey] || "기능";
   const target = Number(targetInput.value);
 
-  if (!character) return alert("캐릭터를 선택해 주세요.");
-  if (!target || target < 1) return alert("기능치를 입력해 주세요.");
+  const skillLabels = {
+    spotHidden: "관찰력",
+    listen: "듣기",
+    psychology: "심리학",
+    persuade: "설득",
+    law: "법률",
+    libraryUse: "자료조사"
+  };
+
+  const skillName = skillLabels[skillKey] || "기능";
+
+  if (!character) {
+    alert("캐릭터를 선택해 주세요.");
+    return;
+  }
+
+  if (!target || target < 1) {
+    alert("기능치를 입력해 주세요.");
+    return;
+  }
+
+  if (!Array.isArray(currentSession.logs)) {
+    currentSession.logs = [];
+  }
 
   const roll = Math.floor(Math.random() * 100) + 1;
   const outcome = evaluateRoll(roll, target);
-
-  const outcomeLabel = {
-    critical: "크리티컬",
-    extreme: "극단적 성공",
-    hard: "어려운 성공",
-    success: "성공",
-    failure: "실패",
-    fumble: "펌블"
-  }[outcome];
 
   currentSession.logs.push({
     id: "log_" + Date.now(),
