@@ -424,7 +424,7 @@ function saveCurrentCharacter() {
 function addCharacter() {
   if (!currentSession) return;
 
-  const char = createDefaultCharacter();
+  const char = createDefaultCocCharacter();
 
   currentSession.characters.push(char);
 
