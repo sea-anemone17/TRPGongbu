@@ -143,7 +143,7 @@ function loadTheme() {
   return localStorage.getItem(THEME_KEY) || "dark";
 }
 
-export function createDefaultCharacter() {
+function createDefaultCharacter() {
   return {
     id: "char_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
     name: "새 탐사자",
