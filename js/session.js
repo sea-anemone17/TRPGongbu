@@ -18,6 +18,139 @@ const SKILL_LABELS = {
   law: "법학"
 };
 
+function createDefaultCocCharacter() {
+  return {
+    id: "char_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+    name: "새 탐사자",
+    avatar: "",
+    color: "#7aa2ff",
+    description: "",
+
+    coc: {
+      info: {
+        player: "",
+        occupation: "",
+        age: "",
+        sex: "",
+        residence: "",
+        birthplace: ""
+      },
+
+      attributes: {
+        str: 50,
+        con: 50,
+        siz: 50,
+        dex: 50,
+        app: 50,
+        int: 50,
+        pow: 50,
+        edu: 50
+      },
+
+      derived: {
+        hp: { current: 10, max: 10 },
+        mp: { current: 10, max: 10 },
+        san: { current: 50, max: 99 },
+        luck: 50,
+        move: 8,
+        build: 0,
+        db: "0"
+      },
+
+      skills: {
+        spotHidden: 25,
+        listen: 20,
+        psychology: 10,
+        persuade: 10,
+        law: 5,
+        libraryUse: 20
+      }
+    }
+  };
+}
+
+function ensureCocCharacter(char) {
+  if (!char.coc) {
+    char.coc = {
+      info: {
+        player: "",
+        occupation: "",
+        age: "",
+        sex: "",
+        residence: "",
+        birthplace: ""
+      },
+      attributes: {
+        str: 50,
+        con: 50,
+        siz: 50,
+        dex: 50,
+        app: 50,
+        int: 50,
+        pow: 50,
+        edu: 50
+      },
+      derived: {
+        hp: { current: 10, max: 10 },
+        mp: { current: 10, max: 10 },
+        san: { current: 50, max: 99 },
+        luck: 50,
+        move: 8,
+        build: 0,
+        db: "0"
+      },
+      skills: {
+        spotHidden: 25,
+        listen: 20,
+        psychology: 10,
+        persuade: 10,
+        law: 5,
+        libraryUse: 20
+      }
+    };
+  }
+
+  if (!char.coc.info) char.coc.info = {};
+  if (!char.coc.attributes) char.coc.attributes = {};
+  if (!char.coc.derived) char.coc.derived = {};
+  if (!char.coc.skills) char.coc.skills = {};
+
+  char.coc.attributes = {
+    str: 50,
+    con: 50,
+    siz: 50,
+    dex: 50,
+    app: 50,
+    int: 50,
+    pow: 50,
+    edu: 50,
+    ...char.coc.attributes
+  };
+
+  char.coc.derived = {
+    hp: { current: 10, max: 10, ...(char.coc.derived.hp || {}) },
+    mp: { current: 10, max: 10, ...(char.coc.derived.mp || {}) },
+    san: { current: 50, max: 99, ...(char.coc.derived.san || {}) },
+    luck: 50,
+    move: 8,
+    build: 0,
+    db: "0",
+    ...char.coc.derived
+  };
+
+  char.coc.skills = {
+    spotHidden: 25,
+    listen: 20,
+    psychology: 10,
+    persuade: 10,
+    law: 5,
+    libraryUse: 20,
+    ...char.coc.skills
+  };
+
+  return char;
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -378,7 +511,6 @@ function syncDiceTargetFromSkill() {
 
 function renderCharacterCard() {
   const char = getCharacterById(selectedCharacterId);
-  if (!char) return;
 
   const nameInput = document.getElementById("characterNameInput");
   const colorInput = document.getElementById("characterColorInput");
@@ -386,7 +518,42 @@ function renderCharacterCard() {
   const avatar = document.getElementById("characterAvatarPreview");
   const fallback = document.getElementById("avatarFallback");
 
-  if (!nameInput || !colorInput || !descInput || !avatar || !fallback) return;
+  const playerInput = document.getElementById("playerInput");
+  const jobInput = document.getElementById("jobInput");
+  const hpInput = document.getElementById("hpInput");
+  const mpInput = document.getElementById("mpInput");
+  const sanInput = document.getElementById("sanInput");
+  const luckInput = document.getElementById("luckInput");
+
+  if (
+    !nameInput || !colorInput || !descInput || !avatar || !fallback ||
+    !playerInput || !jobInput || !hpInput || !mpInput || !sanInput || !luckInput
+  ) return;
+
+  if (!char) {
+    nameInput.value = "";
+    colorInput.value = "#7aa2ff";
+    descInput.value = "";
+    playerInput.value = "";
+    jobInput.value = "";
+    hpInput.value = "";
+    mpInput.value = "";
+    sanInput.value = "";
+    luckInput.value = "";
+
+    avatar.removeAttribute("src");
+    avatar.style.display = "none";
+    fallback.style.display = "grid";
+    fallback.textContent = "?";
+    fallback.style.background = `linear-gradient(135deg, #7aa2ff, var(--accent-2))`;
+
+    document.querySelectorAll(".stat-input").forEach(input => {
+      input.value = "";
+    });
+    return;
+  }
+
+  ensureCocCharacter(char);
 
   nameInput.value = char.name || "";
   colorInput.value = char.color || "#7aa2ff";
@@ -404,29 +571,58 @@ function renderCharacterCard() {
     fallback.style.background = `linear-gradient(135deg, ${char.color || "#7aa2ff"}, var(--accent-2))`;
   }
 
+  playerInput.value = char.coc.info.player || "";
+  jobInput.value = char.coc.info.occupation || "";
+
   document.querySelectorAll(".stat-input").forEach(input => {
-    input.value = char.stats[input.dataset.stat] ?? "";
+    const key = input.dataset.stat;
+    input.value = char.coc.attributes[key] ?? "";
   });
+
+  hpInput.value = char.coc.derived.hp.current ?? 0;
+  mpInput.value = char.coc.derived.mp.current ?? 0;
+  sanInput.value = char.coc.derived.san.current ?? 0;
+  luckInput.value = char.coc.derived.luck ?? 0;
 }
 
 function saveCurrentCharacter() {
   const char = getCharacterById(selectedCharacterId);
   if (!char || !currentSession) return;
 
+  ensureCocCharacter(char);
+
   const nameInput = document.getElementById("characterNameInput");
   const colorInput = document.getElementById("characterColorInput");
   const descInput = document.getElementById("characterDescInput");
 
-  if (!nameInput || !colorInput || !descInput) return;
+  const playerInput = document.getElementById("playerInput");
+  const jobInput = document.getElementById("jobInput");
+  const hpInput = document.getElementById("hpInput");
+  const mpInput = document.getElementById("mpInput");
+  const sanInput = document.getElementById("sanInput");
+  const luckInput = document.getElementById("luckInput");
+
+  if (
+    !nameInput || !colorInput || !descInput ||
+    !playerInput || !jobInput || !hpInput || !mpInput || !sanInput || !luckInput
+  ) return;
 
   char.name = nameInput.value.trim() || "이름 없음";
   char.color = colorInput.value || "#7aa2ff";
   char.description = descInput.value.trim();
 
+  char.coc.info.player = playerInput.value.trim();
+  char.coc.info.occupation = jobInput.value.trim();
+
   document.querySelectorAll(".stat-input").forEach(input => {
     const key = input.dataset.stat;
-    char.stats[key] = Number(input.value) || 1;
+    char.coc.attributes[key] = Number(input.value) || 0;
   });
+
+  char.coc.derived.hp.current = Number(hpInput.value) || 0;
+  char.coc.derived.mp.current = Number(mpInput.value) || 0;
+  char.coc.derived.san.current = Number(sanInput.value) || 0;
+  char.coc.derived.luck = Number(luckInput.value) || 0;
 
   currentSession.selectedCharacterId = selectedCharacterId;
   persistAndRefresh();
