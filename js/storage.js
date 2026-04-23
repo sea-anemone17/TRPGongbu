@@ -19,7 +19,7 @@ function createDefaultSession() {
       isRunning: false,
       lastStartedAt: null
     },
-    characters: [],
+    characters: [createDefaultCocCharacter()],
     selectedCharacterId: null,
     logs: [
       {
