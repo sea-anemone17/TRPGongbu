@@ -499,15 +499,27 @@ function renderCharacterCard() {
   const sanInput = document.getElementById("sanInput");
   const luckInput = document.getElementById("luckInput");
 
+  const skillSpotHiddenInput = document.getElementById("skillSpotHiddenInput");
+  const skillListenInput = document.getElementById("skillListenInput");
+  const skillPsychologyInput = document.getElementById("skillPsychologyInput");
+  const skillPersuadeInput = document.getElementById("skillPersuadeInput");
+  const skillLawInput = document.getElementById("skillLawInput");
+  const skillLibraryUseInput = document.getElementById("skillLibraryUseInput");
+
   if (
     !nameInput || !colorInput || !descInput || !avatar || !fallback ||
-    !playerInput || !jobInput || !hpInput || !mpInput || !sanInput || !luckInput
-  ) return;
+    !playerInput || !jobInput || !hpInput || !mpInput || !sanInput || !luckInput ||
+    !skillSpotHiddenInput || !skillListenInput || !skillPsychologyInput ||
+    !skillPersuadeInput || !skillLawInput || !skillLibraryUseInput
+  ) {
+    return;
+  }
 
   if (!char) {
     nameInput.value = "";
     colorInput.value = "#7aa2ff";
     descInput.value = "";
+
     playerInput.value = "";
     jobInput.value = "";
     hpInput.value = "";
@@ -515,13 +527,20 @@ function renderCharacterCard() {
     sanInput.value = "";
     luckInput.value = "";
 
+    skillSpotHiddenInput.value = "";
+    skillListenInput.value = "";
+    skillPsychologyInput.value = "";
+    skillPersuadeInput.value = "";
+    skillLawInput.value = "";
+    skillLibraryUseInput.value = "";
+
     avatar.removeAttribute("src");
     avatar.style.display = "none";
     fallback.style.display = "grid";
     fallback.textContent = "?";
     fallback.style.background = `linear-gradient(135deg, #7aa2ff, var(--accent-2))`;
 
-    document.querySelectorAll(".stat-input").forEach(input => {
+    document.querySelectorAll('.stat-input[data-stat]').forEach(input => {
       input.value = "";
     });
     return;
@@ -548,7 +567,7 @@ function renderCharacterCard() {
   playerInput.value = char.coc.info.player || "";
   jobInput.value = char.coc.info.occupation || "";
 
-  document.querySelectorAll(".stat-input").forEach(input => {
+  document.querySelectorAll('.stat-input[data-stat]').forEach(input => {
     const key = input.dataset.stat;
     input.value = char.coc.attributes[key] ?? "";
   });
@@ -557,6 +576,13 @@ function renderCharacterCard() {
   mpInput.value = char.coc.derived.mp.current ?? 0;
   sanInput.value = char.coc.derived.san.current ?? 0;
   luckInput.value = char.coc.derived.luck ?? 0;
+
+  skillSpotHiddenInput.value = char.coc.skills.spotHidden ?? 0;
+  skillListenInput.value = char.coc.skills.listen ?? 0;
+  skillPsychologyInput.value = char.coc.skills.psychology ?? 0;
+  skillPersuadeInput.value = char.coc.skills.persuade ?? 0;
+  skillLawInput.value = char.coc.skills.law ?? 0;
+  skillLibraryUseInput.value = char.coc.skills.libraryUse ?? 0;
 }
 
 function saveCurrentCharacter() {
@@ -576,10 +602,21 @@ function saveCurrentCharacter() {
   const sanInput = document.getElementById("sanInput");
   const luckInput = document.getElementById("luckInput");
 
+  const skillSpotHiddenInput = document.getElementById("skillSpotHiddenInput");
+  const skillListenInput = document.getElementById("skillListenInput");
+  const skillPsychologyInput = document.getElementById("skillPsychologyInput");
+  const skillPersuadeInput = document.getElementById("skillPersuadeInput");
+  const skillLawInput = document.getElementById("skillLawInput");
+  const skillLibraryUseInput = document.getElementById("skillLibraryUseInput");
+
   if (
     !nameInput || !colorInput || !descInput ||
-    !playerInput || !jobInput || !hpInput || !mpInput || !sanInput || !luckInput
-  ) return;
+    !playerInput || !jobInput || !hpInput || !mpInput || !sanInput || !luckInput ||
+    !skillSpotHiddenInput || !skillListenInput || !skillPsychologyInput ||
+    !skillPersuadeInput || !skillLawInput || !skillLibraryUseInput
+  ) {
+    return;
+  }
 
   char.name = nameInput.value.trim() || "이름 없음";
   char.color = colorInput.value || "#7aa2ff";
@@ -588,7 +625,7 @@ function saveCurrentCharacter() {
   char.coc.info.player = playerInput.value.trim();
   char.coc.info.occupation = jobInput.value.trim();
 
-  document.querySelectorAll(".stat-input").forEach(input => {
+  document.querySelectorAll('.stat-input[data-stat]').forEach(input => {
     const key = input.dataset.stat;
     char.coc.attributes[key] = Number(input.value) || 0;
   });
@@ -597,6 +634,13 @@ function saveCurrentCharacter() {
   char.coc.derived.mp.current = Number(mpInput.value) || 0;
   char.coc.derived.san.current = Number(sanInput.value) || 0;
   char.coc.derived.luck = Number(luckInput.value) || 0;
+
+  char.coc.skills.spotHidden = Number(skillSpotHiddenInput.value) || 0;
+  char.coc.skills.listen = Number(skillListenInput.value) || 0;
+  char.coc.skills.psychology = Number(skillPsychologyInput.value) || 0;
+  char.coc.skills.persuade = Number(skillPersuadeInput.value) || 0;
+  char.coc.skills.law = Number(skillLawInput.value) || 0;
+  char.coc.skills.libraryUse = Number(skillLibraryUseInput.value) || 0;
 
   currentSession.selectedCharacterId = selectedCharacterId;
   persistAndRefresh();
