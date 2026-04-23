@@ -190,6 +190,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   ========================= */
 
   document.getElementById("diceSkill")?.addEventListener("change", window.syncDiceTargetFromSkill);
+  document.getElementById("diceMode")?.addEventListener("change", window.populateSkillSelect);
 
   document.getElementById("rollDiceBtn")?.addEventListener("click", async () => {
     const session = window.currentSession;
