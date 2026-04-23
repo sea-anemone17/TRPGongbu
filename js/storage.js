@@ -91,3 +91,54 @@ function saveTheme(theme) {
 function loadTheme() {
   return localStorage.getItem(THEME_KEY) || "dark";
 }
+
+export function createDefaultCharacter() {
+  return {
+    id: "char_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+    name: "새 탐사자",
+    avatar: "",
+    color: "#7aa2ff",
+    description: "",
+
+    coc: {
+      info: {
+        player: "",
+        occupation: "",
+        age: "",
+        sex: "",
+        residence: "",
+        birthplace: ""
+      },
+
+      attributes: {
+        str: 50,
+        con: 50,
+        siz: 50,
+        dex: 50,
+        app: 50,
+        int: 50,
+        pow: 50,
+        edu: 50
+      },
+
+      derived: {
+        hp: { current: 10, max: 10 },
+        mp: { current: 10, max: 10 },
+        san: { current: 50, max: 99 },
+        luck: 50,
+        move: 8,
+        build: 0,
+        db: "0"
+      },
+
+      skills: {
+        spotHidden: 25,
+        listen: 20,
+        psychology: 10,
+        persuade: 10,
+        law: 5,
+        libraryUse: 20
+      }
+    }
+  };
+}
